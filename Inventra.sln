@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Invetra", "Invetra\Invetra.csproj", "{33484E8B-2C87-4F90-8645-FA3F586CAD3D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inventra.Data", "Inventra.Data\Inventra.Data.csproj", "{054A3BBE-C7EA-4D7B-AFA1-979CC93985A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{33484E8B-2C87-4F90-8645-FA3F586CAD3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33484E8B-2C87-4F90-8645-FA3F586CAD3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33484E8B-2C87-4F90-8645-FA3F586CAD3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{054A3BBE-C7EA-4D7B-AFA1-979CC93985A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{054A3BBE-C7EA-4D7B-AFA1-979CC93985A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{054A3BBE-C7EA-4D7B-AFA1-979CC93985A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{054A3BBE-C7EA-4D7B-AFA1-979CC93985A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
