@@ -11,7 +11,7 @@ namespace Inventra.Data.Entities
     public class Product
     {
         [Key]
-        public Guid ProductId { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [MaxLength(200)]
@@ -19,7 +19,7 @@ namespace Inventra.Data.Entities
 
         [Required]
         [ForeignKey(nameof(Category))]
-        public int CategoryId { get; set; }
+        public Guid CategoryId { get; set; }
         public Category Category { get; set; } = null!;
 
         [Required]
@@ -52,7 +52,7 @@ namespace Inventra.Data.Entities
         public WarehouseLocation WarehouseLocation { get; set; } = null!;
 
 
-        public ICollection<OrderDeatails> OrderDeatails { get; set; } = [];
+        public ICollection<OrderDetails> OrderDeatails { get; set; } = [];
 
     }
 }

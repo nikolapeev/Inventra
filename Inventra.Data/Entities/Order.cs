@@ -5,13 +5,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Inventra.Data.Entities;
 
 namespace Inventra.Data.Entities
 {
     public class Order
     {
         [Key]
-        public int OrderId { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [ForeignKey(nameof(Customer))]
@@ -31,7 +32,7 @@ namespace Inventra.Data.Entities
         public decimal TotalPrice { get; set; } 
 
         //Add ETA
-        public ICollection<OrderDeatails> OrderDeatails { get; set; } = [];
+        public ICollection<OrderDetails> OrderDeatails { get; set; } = [];
 
     }
 }

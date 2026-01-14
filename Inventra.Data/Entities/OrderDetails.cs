@@ -9,8 +9,7 @@ using System.Threading.Tasks;
 
 namespace Inventra.Data.Entities
 {
-    [PrimaryKey(nameof(Order), nameof(Product))]
-    public class OrderDeatails
+    public class OrderDetails
     {
         public Guid OrderId { get; set; }
         public Guid ProductId { get; set; }
