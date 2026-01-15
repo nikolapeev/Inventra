@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Inventra.Data
 {
-    public class InventraDbContext : IdentityDbContext<User>
+    public class InventraDbContext : IdentityDbContext<InventraUser>
     {
         public InventraDbContext(DbContextOptions options) : base(options)
         {
