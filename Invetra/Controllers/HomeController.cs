@@ -2,7 +2,7 @@ using Invetra.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace Invetra.Controllers
+namespace Inventra.Controllers
 {
     public class HomeController : Controller
     {
