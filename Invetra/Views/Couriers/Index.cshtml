@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Inventra.Data.Entities.Country>
+﻿@model IEnumerable<Inventra.Data.Entities.Courier>
 
 @{
     ViewData["Title"] = "Index";
@@ -25,9 +25,9 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.CountryId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CountryId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.CountryId">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.CourierId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.CourierId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.CourierId">Delete</a>
             </td>
         </tr>
 }
