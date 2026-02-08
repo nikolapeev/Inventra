@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Inventra.Data;
 using Inventra.Data.Entities;
+using Inventra.Models;
+using Inventra.Models.Categories;
+using Inventra.Models.Countries;
 
 namespace Inventra.Controllers
 {
@@ -22,7 +25,14 @@ namespace Inventra.Controllers
         // GET: Countries
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Countries.ToListAsync());
+            var countries = await _context.Countries
+            .Select(c => new CountryIndexViewModel
+            {
+                CountryId = c.CountryId,
+                Name = c.Name
+            }).ToListAsync();
+            return View(countries);
+
         }
 
         // GET: Countries/Details/5

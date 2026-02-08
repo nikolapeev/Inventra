@@ -53,6 +53,8 @@ namespace Inventra.Data
         public DbSet<OrderDetails> OrderDetails { get; set; }
         public DbSet<WarehouseLocation> WarehouseLocations { get; set; }
         public DbSet<CourierCountry> CourierCountries { get; set; }
+        public DbSet<GoodsReceipt> GoodsReceipts { get; set; }
+        public DbSet<GoodsReceiptLine> GoodsReceiptLines { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<Country> Countries { get; set; }
 

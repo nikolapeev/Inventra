@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Inventra.Data;
 using Inventra.Data.Entities;
+using Inventra.Models.Couriers;
+using Inventra.Models.Categories;
 
 namespace Inventra.Controllers
 {
@@ -22,19 +24,27 @@ namespace Inventra.Controllers
         // GET: Couriers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Couriers.ToListAsync());
+            var couriers = _context.Couriers
+                .Select(c => new CourierIndexViewModel
+                {
+                    CourierId = c.CourierId,
+                    Name=c.Name
+                })
+                .ToListAsync();
+            return View(couriers);
         }
 
         // GET: Couriers/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var courier=await _context.Couriers
+                .Where(c=>c.CourierId==id)
+                .Select(c=>new CourierDetailsViewModel
+                {
+                    CourierId=c.CourierId,
+                    Name=c.Name
+                }).FirstOrDefaultAsync();
 
-            var courier = await _context.Couriers
-                .FirstOrDefaultAsync(m => m.CourierId == id);
             if (courier == null)
             {
                 return NotFound();
@@ -46,7 +56,7 @@ namespace Inventra.Controllers
         // GET: Couriers/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new CourierCreateViewModel());
         }
 
         // POST: Couriers/Create
@@ -54,32 +64,42 @@ namespace Inventra.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CourierId,Name")] Courier courier)
+        public async Task<IActionResult> Create(CourierCreateViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                courier.CourierId = Guid.NewGuid();
-                _context.Add(courier);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(model); 
             }
-            return View(courier);
+
+            var courier = new Courier
+            {
+                CourierId = Guid.NewGuid(),
+                Name = model.Name
+            };
+            
+            await _context.Couriers.AddAsync(courier);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Couriers/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var courier = await _context.Couriers.FindAsync(id);
+
             if (courier == null)
             {
                 return NotFound();
             }
-            return View(courier);
+
+            var model = new CourierIndexViewModel
+            {
+                CourierId = courier.CourierId,
+                Name = courier.Name
+            };
+
+            return View(model);
         }
 
         // POST: Couriers/Edit/5
@@ -87,34 +107,24 @@ namespace Inventra.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("CourierId,Name")] Courier courier)
+        public async Task<IActionResult> Edit(CourierIndexViewModel model)
         {
-            if (id != courier.CourierId)
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                return View(model);
             }
 
-            if (ModelState.IsValid)
+            var courier = await _context.Couriers.FindAsync(model.CourierId);
+
+            if (courier == null)
             {
-                try
-                {
-                    _context.Update(courier);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CourierExists(courier.CourierId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return NotFound();  
             }
-            return View(courier);
+
+            courier.Name = model.Name;
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Couriers/Delete/5

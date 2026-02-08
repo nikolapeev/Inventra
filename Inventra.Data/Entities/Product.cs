@@ -36,23 +36,21 @@ namespace Inventra.Data.Entities
         public string ImageURL { get; set; } = null!;
 
         [Required]
-        public string BatchNumber { get; set; } = null!;    
+        public string BatchNumber { get; set; } = null!;
 
-        //[Required]
-        //[ForeignKey(nameof(Supplier))]  
-        //public int SupplierId { get; set; }
-        //public Supplier Supplier { get; set; } = null!;
+
 
         //[Required]
         //public string AddedBy { get; set; } = null!;    
 
         [Required]
-        [ForeignKey(nameof(WarehouseLocation))] 
+        [ForeignKey(nameof(WarehouseLocation))]
         public Guid WarehouseLocationId { get; set; }
         public WarehouseLocation WarehouseLocation { get; set; } = null!;
 
 
-        public ICollection<OrderDetails> OrderDeatails { get; set; } = [];
+        public ICollection<OrderDetails> OrderDeatails { get; set; } = new List<OrderDetails>();
+        public ICollection<GoodsReceiptLine> Lines { get; set; } = new List<GoodsReceiptLine>();
 
     }
 }
