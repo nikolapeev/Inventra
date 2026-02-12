@@ -12,7 +12,7 @@ namespace Inventra.Models.Orders
 
         [Required]
         [StringLength(50)]
-        public string TrackingNumber { get; set; } = string.Empty;
+        public string TrackingNumber { get; set; } = null!;
 
         [Required]
         public decimal TotalPrice { get; set; }

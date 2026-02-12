@@ -9,35 +9,35 @@ namespace Inventra.Models.Customers
 
         [Required]
         [MaxLength(100)]
-        public string FullName { get; set; } = string.Empty;
+        public string FullName { get; set; } = null!;
 
         [Required]
         [Phone]
-        public string PhoneNumber { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = null!;
 
         [Required]
         [EmailAddress]
-        public string Email { get; set; } = string.Empty;
+        public string Email { get; set; } = null!;
 
         [Required]
-        public string Country { get; set; } = string.Empty;
+        public string Country { get; set; } = null!;
 
         [Required]
-        public string County { get; set; } = string.Empty;
+        public string County { get; set; } = null!;
 
         [Required]
-        public string City { get; set; } = string.Empty;
+        public string City { get; set; } = null!;
 
         [Required]
-        public string Address { get; set; } = string.Empty;
+        public string Address { get; set; } = null!;
 
         [Required]
-        public string PostalCode { get; set; } = string.Empty;
+        public string PostalCode { get; set; } = null!;
 
         [Required]
-        public string EIK { get; set; } = string.Empty;
+        public string EIK { get; set; } = null!;
 
         [Required]
-        public string ZDDS { get; set; } = string.Empty;
+        public string ZDDS { get; set; } = null!;
     }
 }
