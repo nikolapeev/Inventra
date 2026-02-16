@@ -21,8 +21,8 @@ namespace Inventra.Data.Entities
         [MaxLength(200)]
         public string Description { get; set; } = null!;
 
-        //[Required]
-        //public bool IsFull { get; set; }    
+        [Required]
+        public bool IsFull { get; set; }    
 
         public ICollection<Product> Products { get; set; }
     }
