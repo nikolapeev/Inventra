@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Inventra.Data;
 using Inventra.Data.Entities;
+using Inventra.Models.Orders;
 
 namespace Inventra.Controllers
 {
@@ -22,8 +23,17 @@ namespace Inventra.Controllers
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-            var inventraDbContext = _context.Orders.Include(o => o.Courier).Include(o => o.Customer);
-            return View(await inventraDbContext.ToListAsync());
+            var orders = await _context.Orders
+                .Select(o => new OrderIndexViewModel
+                {
+                    Id = o.Id,
+                    CustomerName = o.Customer.FullName,
+                    CourierName = o.Courier.Name,
+                    TrackingNumber = o.TrackingNumber,
+                    TotalPrice = o.TotalPrice,
+                }).ToListAsync();
+
+            return View(orders);
         }
 
         // GET: Orders/Details/5
@@ -49,9 +59,7 @@ namespace Inventra.Controllers
         // GET: Orders/Create
         public IActionResult Create()
         {
-            ViewData["CourierId"] = new SelectList(_context.Couriers, "CourierId", "Name");
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "Address");
-            return View();
+            return View(new OrderCreateViewModel());
         }
 
         // POST: Orders/Create
@@ -59,18 +67,17 @@ namespace Inventra.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CustomerId,CourierId,TrackingNumber,TotalPrice")] Order order)
+        public async Task<IActionResult> Create(OrderCreateViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                order.Id = Guid.NewGuid();
-                _context.Add(order);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(model);
             }
-            ViewData["CourierId"] = new SelectList(_context.Couriers, "CourierId", "Name", order.CourierId);
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "Address", order.CustomerId);
-            return View(order);
+
+            var order=new Order()
+            {
+
+            }
         }
 
         // GET: Orders/Edit/5

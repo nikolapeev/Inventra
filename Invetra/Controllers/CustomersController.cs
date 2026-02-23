@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Inventra.Data;
 using Inventra.Data.Entities;
+using Inventra.Models.Customers;
+using Inventra.Models.Categories;
 
 namespace Inventra.Controllers
 {
@@ -22,22 +24,49 @@ namespace Inventra.Controllers
         // GET: Customers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customers.ToListAsync());
+            var customers = await _context.Customers
+                .Select(c=> new CustomerIndexViewModel
+                {
+                    CustomerId = c.CustomerId,
+                    FullName=c.FullName,
+                    PhoneNumber=c.PhoneNumber,
+                    Email=c.Email,
+                    Country=c.Country,
+                    County=c.County,
+                    City=c.City,
+                    Address=c.Address,
+                    PostalCode=c.PostalCode,
+                    EIK=c.EIK,
+                    ZDDS=c.ZDDS
+
+                }).ToListAsync();
+
+            return View(customers);
         }
 
         // GET: Customers/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var customer=await _context.Customers
+                .Where(c=>c.CustomerId==id)
+                .Select(c=>new CustomerDetailsViewModel
+                {
+                    CustomerId = c.CustomerId,
+                    FullName = c.FullName,
+                    PhoneNumber = c.PhoneNumber,
+                    Email = c.Email,
+                    Country = c.Country,
+                    County = c.County,
+                    City = c.City,
+                    Address = c.Address,
+                    PostalCode = c.PostalCode,
+                    EIK = c.EIK,
+                    ZDDS = c.ZDDS
+                }).FirstOrDefaultAsync();
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.CustomerId == id);
             if (customer == null)
             {
-                return NotFound();
+                return NotFound();  
             }
 
             return View(customer);
@@ -46,7 +75,7 @@ namespace Inventra.Controllers
         // GET: Customers/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new CustomerCreateViewModel());
         }
 
         // POST: Customers/Create
@@ -54,32 +83,60 @@ namespace Inventra.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CustomerId,FullName,PhoneNumber,Email,Country,County,City,Address,PostalCode,EIK,ZDDS")] Customer customer)
+        public async Task<IActionResult> Create(CustomerCreateViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                customer.CustomerId = Guid.NewGuid();
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(model);
             }
-            return View(customer);
+
+            var customer = new Customer
+            {
+                CustomerId = Guid.NewGuid(),
+                FullName = model.FullName,
+                PhoneNumber = model.PhoneNumber,
+                Email = model.Email,
+                Country = model.Country,
+                County = model.County,
+                City = model.City,
+                Address = model.Address,
+                PostalCode = model.PostalCode,
+                EIK = model.EIK,
+                ZDDS = model.ZDDS
+
+            };
+            await _context.Customers.AddAsync(customer);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Customers/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
+            var customer = await _context.Customers.FindAsync(id);
+
+            if (customer == null) 
+            { 
+                return NotFound();  
             }
 
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer == null)
+            var model = new CustomerIndexViewModel
             {
-                return NotFound();
-            }
-            return View(customer);
+                CustomerId = customer.CustomerId,
+                FullName = customer.FullName,
+                PhoneNumber = customer.PhoneNumber,
+                Email = customer.Email,
+                Country = customer.Country,
+                County = customer.County,
+                City = customer.City,
+                Address = customer.Address,
+                PostalCode = customer.PostalCode,
+                EIK = customer.EIK,
+                ZDDS = customer.ZDDS
+            };
+            
+            return View(model);
         }
 
         // POST: Customers/Edit/5
@@ -87,34 +144,26 @@ namespace Inventra.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("CustomerId,FullName,PhoneNumber,Email,Country,County,City,Address,PostalCode,EIK,ZDDS")] Customer customer)
+        public async Task<IActionResult> Edit(CustomerIndexViewModel model)
         {
-            if (id != customer.CustomerId)
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var customer = await _context.Customers.FindAsync(model.CustomerId);
+            
+            if (customer== null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(customer);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CustomerExists(customer.CustomerId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(customer);
+            customer.FullName=model.FullName;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: Customers/Delete/5
