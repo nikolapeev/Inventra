@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Inventra.Data;
 using Inventra.Data.Entities;
+using Inventra.Models.Products;
 
 namespace Inventra.Controllers
 {
@@ -22,22 +23,40 @@ namespace Inventra.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var inventraDbContext = _context.Products.Include(p => p.Category).Include(p => p.WarehouseLocation);
-            return View(await inventraDbContext.ToListAsync());
+            var product =await _context.Products
+                .Select(c=>new ProductIndexViewModel
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    CategoryName = c.Category.Name,
+                    Price = c.Price,
+                    StockQuantity = c.StockQuantity
+                }).ToListAsync();
+
+            return View(product);   
+
         }
 
         // GET: Products/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var product = await _context.Products
-                .Include(p => p.Category)
-                .Include(p => p.WarehouseLocation)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Where(p=>p.Id == id)
+                .Select(p => new ProductDetailsViewModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    CategoryName = p.Category.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    StockQuantity = p.StockQuantity,
+                    ImageURL = p.ImageURL,
+                    BatchNumber = p.BatchNumber,
+                    WarehouseLocationName = p.WarehouseLocation.Description,
+                    AddedBy = p.AddedBy
+                })
+            .FirstOrDefaultAsync(); 
+
             if (product == null)
             {
                 return NotFound();
@@ -49,9 +68,7 @@ namespace Inventra.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name");
-            ViewData["WarehouseLocationId"] = new SelectList(_context.WarehouseLocations, "WarehouseLocationId", "Description");
-            return View();
+            return View(new ProductCreateViewModel());
         }
 
         // POST: Products/Create
@@ -59,36 +76,56 @@ namespace Inventra.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,CategoryId,Description,Price,StockQuantity,ImageURL,BatchNumber,WarehouseLocationId")] Product product)
+        public async Task<IActionResult> Create(ProductCreateViewModel model)
         {
-            if (ModelState.IsValid)
+            if(!ModelState.IsValid)
             {
-                product.Id = Guid.NewGuid();
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(model);
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", product.CategoryId);
-            ViewData["WarehouseLocationId"] = new SelectList(_context.WarehouseLocations, "WarehouseLocationId", "Description", product.WarehouseLocationId);
-            return View(product);
+
+            var product = new Product
+            {
+                Id = Guid.NewGuid(),
+                Name = model.Name,
+                CategoryId = model.CategoryId,
+                Description = model.Description,
+                Price = model.Price,
+                StockQuantity = model.StockQuantity,
+                ImageURL = model.ImageURL,
+                BatchNumber = model.BatchNumber,
+                WarehouseLocationId = model.WarehouseLocationId
+            };
+
+            await _context.Products.AddAsync(product);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var product = await _context.Products.FindAsync(id);
+
             if (product == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", product.CategoryId);
-            ViewData["WarehouseLocationId"] = new SelectList(_context.WarehouseLocations, "WarehouseLocationId", "Description", product.WarehouseLocationId);
-            return View(product);
+
+            var model = new ProductEditViewModel
+            {
+                Id = product.Id,
+                Name = product.Name,
+                CategoryId = product.CategoryId,
+                Description = product.Description,
+                Price = product.Price,
+                StockQuantity = product.StockQuantity,
+                ImageURL = product.ImageURL,
+                BatchNumber = product.BatchNumber,
+                WarehouseLocationId = product.WarehouseLocationId
+            };
+
+            return View(model);
         }
 
         // POST: Products/Edit/5
@@ -96,36 +133,25 @@ namespace Inventra.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,CategoryId,Description,Price,StockQuantity,ImageURL,BatchNumber,WarehouseLocationId")] Product product)
+        public async Task<IActionResult> Edit(ProductIndexViewModel model )
         {
-            if (id != product.Id)
+           if(!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+           var product = await _context.Products.FindAsync(model.Id);   
+
+            if (product == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(product.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", product.CategoryId);
-            ViewData["WarehouseLocationId"] = new SelectList(_context.WarehouseLocations, "WarehouseLocationId", "Description", product.WarehouseLocationId);
-            return View(product);
+            product.Name = model.Name;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Products/Delete/5

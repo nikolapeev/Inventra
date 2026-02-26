@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Inventra.Data;
 using Inventra.Data.Entities;
+using Inventra.Models.Suppliers;
 
 namespace Inventra.Controllers
 {
@@ -22,19 +23,35 @@ namespace Inventra.Controllers
         // GET: Suppliers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Suppliers.ToListAsync());
+            var suppliers = await _context.Suppliers
+                .Select(s=>new SupplierIndexViewModel
+                {
+                    SupplierId = s.SupplierId,
+                    Name = s.Name,
+                    EIK = s.EIK,
+                    PhoneNumber = s.PhoneNumber,
+                    Email = s.Email
+                })
+                .ToListAsync();
+
+            return View(suppliers);
         }
 
         // GET: Suppliers/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var supplier = await _context.Suppliers
-                .FirstOrDefaultAsync(m => m.SupplierId == id);
+                .Where(s => s.SupplierId == id)
+                .Select(s => new SupplierDetailsViewModel
+                {
+                    SupplierId = s.SupplierId,
+                    Name = s.Name,
+                    EIK = s.EIK,
+                    PhoneNumber = s.PhoneNumber,
+                    Email = s.Email
+                })
+                .FirstOrDefaultAsync();
+
             if (supplier == null)
             {
                 return NotFound();
@@ -46,7 +63,7 @@ namespace Inventra.Controllers
         // GET: Suppliers/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new SupplierCreateViewModel());
         }
 
         // POST: Suppliers/Create
@@ -54,32 +71,48 @@ namespace Inventra.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SupplierId,Name,EIK,PhoneNumber,Email")] Supplier supplier)
+        public async Task<IActionResult> Create(SupplierCreateViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                supplier.SupplierId = Guid.NewGuid();
-                _context.Add(supplier);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(model);
             }
-            return View(supplier);
+
+            var supplier = new Supplier
+            {
+                SupplierId = Guid.NewGuid(),
+                Name = model.Name,
+                EIK = model.EIK,
+                PhoneNumber = model.PhoneNumber,
+                Email = model.Email
+            };
+
+            await _context.Suppliers.AddAsync(supplier);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Suppliers/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var supplier = await _context.Suppliers.FindAsync(id);
+
             if (supplier == null)
             {
                 return NotFound();
             }
-            return View(supplier);
+            
+            var model = new SupplierEditViewModel
+            {
+                SupplierId = supplier.SupplierId,
+                Name = supplier.Name,
+                EIK = supplier.EIK,
+                PhoneNumber = supplier.PhoneNumber,
+                Email = supplier.Email
+            };
+
+            return View(model);
         }
 
         // POST: Suppliers/Edit/5
@@ -87,34 +120,25 @@ namespace Inventra.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("SupplierId,Name,EIK,PhoneNumber,Email")] Supplier supplier)
+        public async Task<IActionResult> Edit(SupplierIndexViewModel model )
         {
-            if (id != supplier.SupplierId)
+            if(!ModelState.IsValid)
+            {
+                return View(model);
+            }   
+
+            var supplier = await _context.Suppliers.FindAsync(model.SupplierId);    
+
+            if(supplier == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(supplier);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SupplierExists(supplier.SupplierId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(supplier);
+            supplier.Name = model.Name;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Suppliers/Delete/5

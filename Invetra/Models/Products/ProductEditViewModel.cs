@@ -2,8 +2,10 @@
 
 namespace Inventra.Models.Products
 {
-    public class ProductCreateViewModel
+    public class ProductEditViewModel
     {
+        public Guid Id { get; set; }
+
         [Required]
         [MaxLength(200)]
         public string Name { get; set; } = null!;
@@ -25,7 +27,7 @@ namespace Inventra.Models.Products
         public string ImageURL { get; set; } = null!;
 
         [Required]
-        public string BatchNumber { get; set; } = null!;
+        public string BatchNumber { get; set; }
 
         [Required]
         public Guid WarehouseLocationId { get; set; }

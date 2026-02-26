@@ -38,10 +38,8 @@ namespace Inventra.Data.Entities
         [Required]
         public string BatchNumber { get; set; } = null!;
 
-
-
-        //[Required]
-        //public string AddedBy { get; set; } = null!;    
+        [Required]
+        public string AddedBy { get; set; } = null!;    
 
         [Required]
         [ForeignKey(nameof(WarehouseLocation))]
@@ -54,3 +52,5 @@ namespace Inventra.Data.Entities
 
     }
 }
+
+
