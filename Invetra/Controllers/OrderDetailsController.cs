@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventra.Controllers
 {
-    public class OrderDetailsController:Controller
+    public class OrderDetailsController : Controller
     {
         private readonly InventraDbContext _context;
 
@@ -23,7 +23,7 @@ namespace Inventra.Controllers
                 {
                     ProductName = od.Product.Name,
                     QTY = od.QTY,
-                    Subtotal =  od.Product.Price * od.QTY 
+                    Subtotal = od.Product.Price * od.QTY
                 })
                 .ToListAsync();
 
@@ -56,7 +56,7 @@ namespace Inventra.Controllers
                 OrderId = model.OrderId,
                 ProductId = model.ProductId,
                 QTY = model.QTY,
-                Subtotal = desiredProduct.Price* model.QTY
+                Subtotal = desiredProduct.Price * model.QTY
 
             };
 
@@ -67,9 +67,9 @@ namespace Inventra.Controllers
 
         //providing the ORDER id 
         [HttpGet]
-        public async Task<IActionResult> Edit(Guid id)
+        public async Task<IActionResult> Edit(Guid orderId)
         {
-            var detail=await _context.OrderDetails.FindAsync(id);
+            var detail = await _context.OrderDetails.FindAsync(orderId);
 
 
             if (detail == null)
@@ -79,10 +79,22 @@ namespace Inventra.Controllers
 
             var model = new OrderDetails
             {
-                OrderId=detail.OrderId,
+                OrderId = detail.OrderId,
                 ProductId = detail.ProductId,
                 QTY = detail.QTY,
-                Subtotal =detail.QTY*de 
-            }
+                Subtotal = detail.QTY * detail.Product.Price
+            };
+
+            return View(model);
         }
+
+        [HttpPost]
+
+        public async Task<IActionResult> Edit(OrderDetailsIndexViewModel model)
+        {
+
+        }
+
+
+    }
 }

@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Inventra.Data;
 using Inventra.Data.Entities;
 using Inventra.Models.Orders;
-using Inventra.Models.Categories;
 
 namespace Inventra.Controllers
 {
@@ -20,6 +19,15 @@ namespace Inventra.Controllers
         {
             _context = context;
         }
+        ///
+        /// 
+        ///
+        /// 
+        //TRANSFER TO ORDER SERVICE METHOD BELOW
+        ///
+        /// 
+        ///
+        ///
 
         // GET: Orders
         public async Task<IActionResult> Index()
@@ -41,24 +49,7 @@ namespace Inventra.Controllers
         public async Task<IActionResult> Details(Guid? id)
         {
             var order = await _context.Orders
-                .Where(o => o.Id == id)
-                .Select(o => new OrderDetailsViewModel
-                {
-                    Id = o.Id,
-                    CustomerName = o.Customer.FullName,
-                    CourierName = o.Courier.Name,
-                    TrackingNumber = o.TrackingNumber,
-                    TotalPrice = o.TotalPrice,
-
-                })
-                .FirstOrDefaultAsync();
-
-            if ( order==null)
-            {
-                return NotFound();
-            }
-
-            return View(order);
+                .Where(o=>)
         }
 
         // GET: Orders/Create
@@ -79,44 +70,38 @@ namespace Inventra.Controllers
                 return View(model);
             }
 
-            var order = new Order()
+            var order = new Order
             {
                 Id = Guid.NewGuid(),
-                CustomerId = model.CustomerId,
-                CourierId = model.CourierId,
-                TrackingNumber = model.TrackingNumber,
-                TotalPrice = model.TotalPrice
+                CustomerId= model.CustomerId,
+                CourierId=model.CourierId,
+                TrackingNumber=model.TrackingNumber,
+                TotalPrice=/* Add sum method in the servce*/,
+
             };
 
-            await _context.Orders.AddAsync(order);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var couriers = _context.Couriers.ToListAsync();
+            var customers = _context.Customers.ToListAsync();
+
+            ViewBag.CourierId = new SelectList(await couriers, "Id", "Name");
+            ViewBag.CustomerId = new SelectList(await customers, "Id", "Name");
         }
 
         // GET: Orders/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            var order = await _context.Orders.FindAsync(id);
-
             if (id == null)
             {
                 return NotFound();
             }
 
+            var order = await _context.Orders.FindAsync(id);
             if (order == null)
             {
                 return NotFound();
             }
-            
-            var model = new OrderEditViewModel()
-            {
-                Id = order.Id,
-                CustomerId = order.CustomerId,
-                CourierId = order.CourierId,
-                TrackingNumber = order.TrackingNumber,
-                TotalPrice = order.TotalPrice
-            };
-
+            ViewData["CourierId"] = new SelectList(_context.Couriers, "CourierId", "Name", order.CourierId);
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "Address", order.CustomerId);
             return View(order);
         }
 
@@ -125,27 +110,36 @@ namespace Inventra.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(OrderIndexViewModel model)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,CustomerId,CourierId,TrackingNumber,TotalPrice")] Order order)
         {
-
-            if (!ModelState.IsValid)
-            {
-                return View(model);    
-            }
-
-            var order = await _context.Orders.FindAsync(model.Id);
-
-            if (order == null)
+            if (id != order.Id)
             {
                 return NotFound();
             }
 
-            order.TrackingNumber = model.TrackingNumber;
-
-            await _context.SaveChangesAsync();  
-
-
-            return RedirectToAction(nameof(Index));
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(order);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!OrderExists(order.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["CourierId"] = new SelectList(_context.Couriers, "CourierId", "Name", order.CourierId);
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "Address", order.CustomerId);
+            return View(order);
         }
 
         // GET: Orders/Delete/5
