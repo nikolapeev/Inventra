@@ -38,13 +38,15 @@ namespace Inventra.Controllers
         // GET: Countries/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var country = await _context.Countries
-                .FirstOrDefaultAsync(m => m.CountryId == id);
+                .Where(c => c.CountryId == id)
+                .Select(c => new CountryIndexViewModel
+                {
+                    CountryId = c.CountryId,
+                    Name = c.Name
+                })
+                .FirstOrDefaultAsync();
+
             if (country == null)
             {
                 return NotFound();
@@ -56,7 +58,7 @@ namespace Inventra.Controllers
         // GET: Countries/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new CountryCreateViewModel());
         }
 
         // POST: Countries/Create
@@ -64,32 +66,43 @@ namespace Inventra.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CountryId,Name")] Country country)
+        public async Task<IActionResult> Create(CountryCreateViewModel model )
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                country.CountryId = Guid.NewGuid();
-                _context.Add(country);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(model);
             }
-            return View(country);
+
+            var country = new Country
+            {
+                CountryId = Guid.NewGuid(),
+                Name = model.Name
+            };
+
+            await _context.Countries.AddAsync(country);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Countries/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var country = await _context.Countries.FirstOrDefaultAsync(c=>c.CountryId==id);
 
-            var country = await _context.Countries.FindAsync(id);
             if (country == null)
             {
                 return NotFound();
             }
-            return View(country);
+
+            var model = new CountryIndexViewModel
+            {
+                CountryId = country.CountryId,
+                Name=country.Name
+            };
+
+            return View(model);
         }
 
         // POST: Countries/Edit/5
@@ -97,34 +110,25 @@ namespace Inventra.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("CountryId,Name")] Country country)
+        public async Task<IActionResult> Edit(CountryIndexViewModel model )
         {
-            if (id != country.CountryId)
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var country = await _context.Countries.FindAsync(model.CountryId);
+
+            if (country == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(country);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CountryExists(country.CountryId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(country);
+            country.Name = model.Name;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Countries/Delete/5

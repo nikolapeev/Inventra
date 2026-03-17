@@ -92,9 +92,62 @@ namespace Inventra.Controllers
 
         public async Task<IActionResult> Edit(OrderDetailsIndexViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model); 
+            }
 
+            var detail = await _context.OrderDetails.FindAsync(model.OrderId);
+
+            if (detail == null)
+            {
+                return NotFound();
+            }
+
+            detail.QTY= model.QTY;
+            detail.Subtotal= detail.QTY*detail.Product.Price;
+
+            _context.OrderDetails.Update(detail);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
+        // GET: OrderDetails/Delete?orderId={orderId}&productId={productId}
+        [HttpGet]
+        public async Task<IActionResult> Delete(Guid orderId, Guid productId)
+        {
+            var detail = await _context.OrderDetails
+                .Include(od => od.Product)
+                .FirstOrDefaultAsync(od => od.OrderId == orderId && od.ProductId == productId);
 
+            if (detail == null)
+            {
+                return NotFound();
+            }
+
+            // Reuse the OrderDetails entity as the view model (consistent with Edit GET style)
+            return View(detail);
+        }
+
+        // POST: OrderDetails/Delete
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(Guid orderId, Guid productId)
+        {
+            var detail = await _context.OrderDetails
+                .FirstOrDefaultAsync(od => od.OrderId == orderId && od.ProductId == productId);
+
+            if (detail == null)
+            {
+                return NotFound();
+            }
+
+            _context.OrderDetails.Remove(detail);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

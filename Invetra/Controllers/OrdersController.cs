@@ -49,7 +49,22 @@ namespace Inventra.Controllers
         public async Task<IActionResult> Details(Guid? id)
         {
             var order = await _context.Orders
-                .Where(o=>)
+                .Where(o => o.Id == id)
+                .Select(o => new OrderDetailsViewModel
+                {
+                    Id = o.Id,
+                    CustomerName = o.Customer.FullName,
+                    CourierName = o.Courier.Name,
+                    TrackingNumber = o.TrackingNumber,
+                    TotalPrice = //add method to service- sum each orderDetail associated with the order,
+                }).FirstOrDefaultAsync();
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View(order);
         }
 
         // GET: Orders/Create
@@ -90,19 +105,22 @@ namespace Inventra.Controllers
         // GET: Orders/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var order = await _context.Orders.FindAsync(id);
+
             if (order == null)
             {
                 return NotFound();
             }
-            ViewData["CourierId"] = new SelectList(_context.Couriers, "CourierId", "Name", order.CourierId);
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "Address", order.CustomerId);
-            return View(order);
+
+            var model = new OrderIndexViewModel
+            {
+                Id = order.Id,
+                CourierName = order.Courier.Name,
+                TrackingNumber = order.TrackingNumber,
+                TotalPrice = //add method in the service; look at the lines above for context ,
+            };
+
+            return View(model);
         }
 
         // POST: Orders/Edit/5
@@ -110,36 +128,27 @@ namespace Inventra.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,CustomerId,CourierId,TrackingNumber,TotalPrice")] Order order)
+        public async Task<IActionResult> Edit(OrderIndexViewModel model)
         {
-            if (id != order.Id)
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var order = await _context.Orders.FindAsync(model.Id);
+
+            if (order == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(order);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!OrderExists(order.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CourierId"] = new SelectList(_context.Couriers, "CourierId", "Name", order.CourierId);
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "Address", order.CustomerId);
-            return View(order);
+            model.CourierName = order.Courier.Name;
+            model.TrackingNumber=order.TrackingNumber;
+            model.TotalPrice = order.TotalPrice;
+
+            await _context.SaveChangesAsync();
+
+            return View(model);
         }
 
         // GET: Orders/Delete/5
