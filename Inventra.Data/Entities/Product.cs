@@ -46,7 +46,7 @@ namespace Inventra.Data.Entities
         
 
 
-        public ICollection<OrderDetails> OrderDeatails { get; set; } = new List<OrderDetails>();
+        public ICollection<OrderDetails> OrderDetails { get; set; } = new List<OrderDetails>();
         public ICollection<GoodsReceiptLine> Lines { get; set; } = new List<GoodsReceiptLine>();
 
     }

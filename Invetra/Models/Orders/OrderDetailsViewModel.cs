@@ -9,7 +9,7 @@
         public string CustomerName { get; set; } = null!;
         public string CourierName { get; set; } = null!;
 
-        public string TrackingNumber { get; set; } = null!;;
+        public string TrackingNumber { get; set; } = null!;
         public decimal TotalPrice { get; set; }
         public string AdditionalInfo { get; set; } = null!;
 

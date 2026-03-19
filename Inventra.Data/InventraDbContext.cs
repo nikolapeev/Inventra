@@ -25,11 +25,11 @@ namespace Inventra.Data
                 entity.HasKey(od => new { od.OrderId, od.ProductId });
 
                 entity.HasOne(od => od.Order)
-                    .WithMany(o => o.OrderDeatails)
+                    .WithMany(o => o.OrderDetails)
                     .HasForeignKey(od => od.OrderId);
 
                 entity.HasOne(od => od.Product)
-                    .WithMany(p => p.OrderDeatails)
+                    .WithMany(p => p.OrderDetails)
                     .HasForeignKey(od => od.ProductId);
 
                 entity.Property(od => od.Subtotal)
@@ -51,14 +51,8 @@ namespace Inventra.Data
         public DbSet<Courier> Couriers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetails> OrderDetails { get; set; }
-        public DbSet<WarehouseLocation> WarehouseLocations { get; set; }
-        public DbSet<CourierCountry> CourierCountries { get; set; }
         public DbSet<GoodsReceipt> GoodsReceipts { get; set; }
         public DbSet<GoodsReceiptLine> GoodsReceiptLines { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
-        public DbSet<Country> Countries { get; set; }
-
-
-
     }
 }

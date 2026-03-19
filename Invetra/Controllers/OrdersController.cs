@@ -57,7 +57,7 @@ namespace Inventra.Controllers
                     CustomerName = o.Customer.FullName,
                     CourierName = o.Courier.Name,
                     TrackingNumber = o.TrackingNumber,
-                    TotalPrice = /*add method to service- sum each orderDetail associated with the order,*/,
+                    TotalPrice = /*add method to service- sum each orderDetail associated with the order,*/ o.TotalPrice,
                     AdditionalInfo= o.AdditionalInfo
                 }).FirstOrDefaultAsync();
 
@@ -93,7 +93,7 @@ namespace Inventra.Controllers
                 CustomerId= model.CustomerId,
                 CourierId=model.CourierId,
                 TrackingNumber=model.TrackingNumber,
-                TotalPrice=/* Add sum method in the servce*/,
+                TotalPrice=/* Add sum method in the servce*/ model.TotalPrice,
                 AdditionalInfo= model.AdditionalInfo
 
             };
@@ -103,6 +103,7 @@ namespace Inventra.Controllers
 
             ViewBag.CourierId = new SelectList(await couriers, "Id", "Name");
             ViewBag.CustomerId = new SelectList(await customers, "Id", "Name");
+            return View(model);
         }
 
         // GET: Orders/Edit/5
@@ -120,7 +121,7 @@ namespace Inventra.Controllers
                 Id = order.Id,
                 CourierName = order.Courier.Name,
                 TrackingNumber = order.TrackingNumber,
-                TotalPrice = /*add method in the service; look at the lines above for context*/ ,
+                TotalPrice = /*add method in the service; look at the lines above for context*/ order.TotalPrice,
                 AdditionalInfo = order.AdditionalInfo
             };
 

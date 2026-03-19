@@ -9,7 +9,9 @@ namespace Inventra.Data.Entities
 {
     public class GoodsReceiptLine
     {
-        public Guid GoodsReceiptId { get; set; }
+
+        [Key]
+        public Guid Id { get; set; }
         public GoodsReceipt GoodsReceipt { get; set; } = null!;
 
         public Guid ProductId { get; set; }

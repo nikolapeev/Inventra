@@ -19,7 +19,7 @@ public class Program
 
         // 3. Setup the Database Connection
         builder.Services.AddDbContext<InventraDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("GigaByte")));
 
         // 4. Configure Identity (The "Default UI" Trick)
         builder.Services.AddDefaultIdentity<InventraUser>(options => {
