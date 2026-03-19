@@ -39,12 +39,11 @@ namespace Inventra.Data.Entities
         public string BatchNumber { get; set; } = null!;
 
         [Required]
-        public string AddedBy { get; set; } = null!;    
+        public string AddedBy { get; set; } = null!;
 
         [Required]
-        [ForeignKey(nameof(WarehouseLocation))]
-        public Guid WarehouseLocationId { get; set; }
-        public WarehouseLocation WarehouseLocation { get; set; } = null!;
+        public string WarehouseLocationId { get; set; } = null!;
+        
 
 
         public ICollection<OrderDetails> OrderDeatails { get; set; } = new List<OrderDetails>();

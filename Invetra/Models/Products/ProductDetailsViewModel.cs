@@ -10,7 +10,7 @@
         public int StockQuantity { get; set; }
         public string ImageURL { get; set; } = null!;
         public string BatchNumber { get; set; } = null!;
-        public string WarehouseLocationName { get; set; } = null!;
+        public string WarehouseLocationId { get; set; } = null!;
         public string AddedBy { get; set; } = null!;
     }
 }

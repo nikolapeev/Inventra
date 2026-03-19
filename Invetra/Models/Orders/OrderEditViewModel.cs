@@ -20,5 +20,8 @@ namespace Inventra.Models.Orders
         [Required]
         public decimal TotalPrice { get; set; }
 
+        [Required]
+        public string AdditionalInfo { get; set; } = null!;
+
     }
 }

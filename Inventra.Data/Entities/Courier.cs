@@ -16,7 +16,9 @@ namespace Inventra.Data.Entities
         [MaxLength(100)]
         public string Name { get; set; }= null!;
 
-
-        public ICollection<CourierCountry> CourierCountries { get; set; } = [];
+        [Required]
+        [Phone]
+        public string Phone { get; set; } = null!;
+        
     }
 }

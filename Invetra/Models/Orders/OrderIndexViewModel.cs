@@ -9,5 +9,6 @@
 
         public string TrackingNumber { get; set; } = null!; 
         public decimal TotalPrice { get; set; }
+        public string AdditionalInfo { get; set; } = null!;
     }
 }

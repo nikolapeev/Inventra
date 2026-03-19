@@ -29,10 +29,12 @@ namespace Inventra.Data.Entities
         public string TrackingNumber { get; set; } = null!;
 
         [Required]
-        public decimal TotalPrice { get; set; } 
+        public decimal TotalPrice { get; set; }
 
-        //Add ETA
-        public ICollection<OrderDetails> OrderDeatails { get; set; } = [];
+        [Required]
+        public string AdditionalInfo { get; set; } = null!;
+
+        public ICollection<OrderDetails> OrderDetails { get; set; } = [];
 
     }
 }

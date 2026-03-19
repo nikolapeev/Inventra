@@ -28,7 +28,8 @@ namespace Inventra.Controllers
                 .Select(c => new CourierIndexViewModel
                 {
                     CourierId = c.CourierId,
-                    Name=c.Name
+                    Name=c.Name,
+                    Phone=c.Phone
                 })
                 .ToListAsync();
             return View(couriers);
@@ -42,7 +43,8 @@ namespace Inventra.Controllers
                 .Select(c=>new CourierDetailsViewModel
                 {
                     CourierId=c.CourierId,
-                    Name=c.Name
+                    Name=c.Name,
+                    Phone=c.Phone
                 }).FirstOrDefaultAsync();
 
             if (courier == null)
@@ -74,7 +76,8 @@ namespace Inventra.Controllers
             var courier = new Courier
             {
                 CourierId = Guid.NewGuid(),
-                Name = model.Name
+                Name = model.Name,
+                Phone=model.Phone
             };
             
             await _context.Couriers.AddAsync(courier);
@@ -122,6 +125,7 @@ namespace Inventra.Controllers
             }
 
             courier.Name = model.Name;
+            courier.Phone = model.Phone;
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

@@ -27,9 +27,9 @@ namespace Inventra.Models.Products
         public string ImageURL { get; set; } = null!;
 
         [Required]
-        public string BatchNumber { get; set; }
+        public string BatchNumber { get; set; }=null!;
 
         [Required]
-        public Guid WarehouseLocationId { get; set; }
+        public string WarehouseLocationId { get; set; } = null!;
     }
 }

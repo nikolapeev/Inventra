@@ -52,7 +52,7 @@ namespace Inventra.Controllers
                     StockQuantity = p.StockQuantity,
                     ImageURL = p.ImageURL,
                     BatchNumber = p.BatchNumber,
-                    WarehouseLocationName = p.WarehouseLocation.Description,
+                    WarehouseLocationId = p.WarehouseLocationId,
                     AddedBy = p.AddedBy
                 })
             .FirstOrDefaultAsync(); 
@@ -164,7 +164,7 @@ namespace Inventra.Controllers
 
             var product = await _context.Products
                 .Include(p => p.Category)
-                .Include(p => p.WarehouseLocation)
+                .Include(p => p.WarehouseLocationId)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {

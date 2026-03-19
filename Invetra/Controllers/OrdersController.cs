@@ -40,6 +40,7 @@ namespace Inventra.Controllers
                     CourierName = o.Courier.Name,
                     TrackingNumber = o.TrackingNumber,
                     TotalPrice = o.TotalPrice,
+                    AdditionalInfo = o.AdditionalInfo
                 }).ToListAsync();
 
             return View(orders);
@@ -56,7 +57,8 @@ namespace Inventra.Controllers
                     CustomerName = o.Customer.FullName,
                     CourierName = o.Courier.Name,
                     TrackingNumber = o.TrackingNumber,
-                    TotalPrice = //add method to service- sum each orderDetail associated with the order,
+                    TotalPrice = /*add method to service- sum each orderDetail associated with the order,*/,
+                    AdditionalInfo= o.AdditionalInfo
                 }).FirstOrDefaultAsync();
 
             if (order == null)
@@ -92,6 +94,7 @@ namespace Inventra.Controllers
                 CourierId=model.CourierId,
                 TrackingNumber=model.TrackingNumber,
                 TotalPrice=/* Add sum method in the servce*/,
+                AdditionalInfo= model.AdditionalInfo
 
             };
 
@@ -117,7 +120,8 @@ namespace Inventra.Controllers
                 Id = order.Id,
                 CourierName = order.Courier.Name,
                 TrackingNumber = order.TrackingNumber,
-                TotalPrice = //add method in the service; look at the lines above for context ,
+                TotalPrice = /*add method in the service; look at the lines above for context*/ ,
+                AdditionalInfo = order.AdditionalInfo
             };
 
             return View(model);
@@ -145,6 +149,7 @@ namespace Inventra.Controllers
             model.CourierName = order.Courier.Name;
             model.TrackingNumber=order.TrackingNumber;
             model.TotalPrice = order.TotalPrice;
+            model.AdditionalInfo = order.AdditionalInfo;    
 
             await _context.SaveChangesAsync();
 
