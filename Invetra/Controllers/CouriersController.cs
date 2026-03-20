@@ -24,7 +24,7 @@ namespace Inventra.Controllers
         // GET: Couriers
         public async Task<IActionResult> Index()
         {
-            var couriers = _context.Couriers
+            var couriers = await _context.Couriers
                 .Select(c => new CourierIndexViewModel
                 {
                     CourierId = c.CourierId,
@@ -77,7 +77,7 @@ namespace Inventra.Controllers
             {
                 CourierId = Guid.NewGuid(),
                 Name = model.Name,
-                Phone=model.Phone
+                Phone = model.Phone
             };
             
             await _context.Couriers.AddAsync(courier);

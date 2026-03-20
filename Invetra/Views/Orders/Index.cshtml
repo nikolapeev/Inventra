@@ -1,53 +1,67 @@
-﻿@model IEnumerable<Inventra.Data.Entities.Order>
+﻿@model IEnumerable<Inventra.Models.Orders.OrderIndexViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Orders Management";
 }
 
-<h1>Index</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Orders</h1>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Create New Order
+    </a>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Customer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Courier)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TrackingNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TotalPrice)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Customer.Address)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Courier.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TrackingNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalPrice)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Customer</th>
+                    <th>Assigned Courier</th>
+                    <th>Tracking Number</th>
+                    <th>Total Price</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">No orders found.</td>
+                    </tr>
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="align-middle">
+                            <strong>@item.CustomerName</strong>
+                        </td>
+                        <td class="align-middle">
+                            @if (string.IsNullOrEmpty(item.CourierName))
+                            {
+                                <span class="badge bg-warning text-dark">Unassigned</span>
+                            }
+                            else
+                            {
+                                <span>@item.CourierName</span>
+                            }
+                        </td>
+                        <td class="align-middle">
+                            <code>@item.TrackingNumber</code>
+                        </td>
+                        <td class="align-middle">
+                            @item.TotalPrice.ToString("C") @* Formats as $1,234.56 based on server locale *@
+                        </td>
+                        <td class="text-center align-middle">
+                            <div class="btn-group" role="group">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">Details</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

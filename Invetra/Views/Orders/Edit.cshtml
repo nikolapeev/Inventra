@@ -1,49 +1,66 @@
-﻿@model Inventra.Data.Entities.Order
+﻿@model Inventra.Models.Orders.OrderIndexViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Order";
 }
 
 <h1>Edit</h1>
 
-<h4>Order</h4>
+<h4>Order Details</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @* Hidden ID field is essential for the POST method to find the right record *@
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="CustomerId" class="control-label"></label>
-                <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId"></select>
+
+            <div class="form-group mb-3">
+                <label asp-for="CustomerId" class="control-label">Customer</label>
+                <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId">
+                    <option value="">-- Select Customer --</option>
+                </select>
                 <span asp-validation-for="CustomerId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="CourierId" class="control-label"></label>
-                <select asp-for="CourierId" class="form-control" asp-items="ViewBag.CourierId"></select>
+
+            <div class="form-group mb-3">
+                <label asp-for="CourierId" class="control-label">Assigned Courier</label>
+                <select asp-for="CourierId" class="form-control" asp-items="ViewBag.CourierId">
+                    <option value="">-- Select Courier --</option>
+                </select>
                 <span asp-validation-for="CourierId" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="TrackingNumber" class="control-label"></label>
-                <input asp-for="TrackingNumber" class="form-control" />
+                <input asp-for="TrackingNumber" class="form-control" placeholder="Enter tracking #" />
                 <span asp-validation-for="TrackingNumber" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="TotalPrice" class="control-label"></label>
-                <input asp-for="TotalPrice" class="form-control" />
+                <input asp-for="TotalPrice" class="form-control" type="number" step="0.01" />
                 <span asp-validation-for="TotalPrice" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            @* Added AdditionalInfo since it's in your Controller logic *@
+            <div class="form-group mb-3">
+                <label asp-for="AdditionalInfo" class="control-label"></label>
+                <textarea asp-for="AdditionalInfo" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="AdditionalInfo" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-4">
+                <input type="submit" value="Save Changes" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

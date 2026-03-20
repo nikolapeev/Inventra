@@ -114,5 +114,20 @@ namespace Inventra.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var cat= await _context.Categories.FindAsync(id);
+
+            if (cat == null)
+            {
+                return NotFound();
+            }
+
+            _context.Categories.Remove(cat);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model Inventra.Data.Entities.Courier
+﻿@model Inventra.Models.Couriers.CourierCreateViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -16,6 +16,11 @@
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Phone" class="control-label"></label>
+                <input asp-for="Phone" class="form-control" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

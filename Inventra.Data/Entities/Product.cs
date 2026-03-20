@@ -36,6 +36,11 @@ namespace Inventra.Data.Entities
         public string ImageURL { get; set; } = null!;
 
         [Required]
+        [ForeignKey(nameof(Supplier))]
+        public Guid SupplierId { get; set; }
+        public Supplier Supplier { get; set; } = null!;
+
+        [Required]
         public string BatchNumber { get; set; } = null!;
 
         [Required]

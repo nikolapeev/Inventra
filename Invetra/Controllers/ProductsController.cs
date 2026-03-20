@@ -23,18 +23,21 @@ namespace Inventra.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var product =await _context.Products
-                .Select(c=>new ProductIndexViewModel
+            
+            var products = await _context.Products
+                .Select(p => new ProductIndexViewModel
                 {
-                    Id = c.Id,
-                    Name = c.Name,
-                    CategoryName = c.Category.Name,
-                    Price = c.Price,
-                    StockQuantity = c.StockQuantity
+                    Id = p.Id,
+                    Name = p.Name,
+                    CategoryName = p.Category.Name, 
+                    SupplierName = p.Supplier.Name, 
+                    Price = p.Price,
+                    StockQuantity = p.StockQuantity,
+                    BatchNumber = p.BatchNumber,
+                    WarehouseLocationId = p.WarehouseLocationId
                 }).ToListAsync();
 
-            return View(product);   
-
+            return View(products);
         }
 
         // GET: Products/Details/5
@@ -66,8 +69,11 @@ namespace Inventra.Controllers
         }
 
         // GET: Products/Create
-        public IActionResult Create()
+        public async Task<IActionResult> CreateAsync()
         {
+            ViewBag.SupplierId = new SelectList(await _context.Suppliers.OrderBy(s => s.Name).ToListAsync(), "SupplierId", "Name");
+            ViewBag.CategoryId = new SelectList(await _context.Categories.OrderBy(c => c.Name).ToListAsync(), "CategoryId", "Name");
+
             return View(new ProductCreateViewModel());
         }
 
@@ -78,8 +84,11 @@ namespace Inventra.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductCreateViewModel model)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
+                ViewBag.SupplierId = new SelectList(await _context.Suppliers.OrderBy(s => s.Name).ToListAsync(), "SupplierId", "Name", model.SupplierId);
+                ViewBag.CategoryId = new SelectList(await _context.Categories.OrderBy(c => c.Name).ToListAsync(), "CategoryId", "Name", model.CategoryId);
+
                 return View(model);
             }
 
@@ -88,12 +97,14 @@ namespace Inventra.Controllers
                 Id = Guid.NewGuid(),
                 Name = model.Name,
                 CategoryId = model.CategoryId,
+                SupplierId = model.SupplierId, 
                 Description = model.Description,
                 Price = model.Price,
                 StockQuantity = model.StockQuantity,
                 ImageURL = model.ImageURL,
                 BatchNumber = model.BatchNumber,
-                WarehouseLocationId = model.WarehouseLocationId
+                WarehouseLocationId = model.WarehouseLocationId,
+                AddedBy = User.Identity?.Name ?? "System" // Added this as your Entity marks it [Required]
             };
 
             await _context.Products.AddAsync(product);

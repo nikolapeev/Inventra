@@ -158,7 +158,16 @@ namespace Inventra.Controllers
                 return NotFound();
             }
 
-            customer.FullName=model.FullName;
+            customer.FullName = model.FullName;
+            customer.PhoneNumber = model.PhoneNumber;
+            customer.Email = model.Email;
+            customer.Country = model.Country;
+            customer.County = model.County;
+            customer.City = model.City;
+            customer.Address = model.Address;
+            customer.PostalCode = model.PostalCode;
+            customer.EIK = model.EIK;
+            customer.ZDDS = model.ZDDS;
 
             await _context.SaveChangesAsync();
 

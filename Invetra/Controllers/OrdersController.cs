@@ -32,6 +32,7 @@ namespace Inventra.Controllers
         // GET: Orders
         public async Task<IActionResult> Index()
         {
+            // You MUST project into the ViewModel here
             var orders = await _context.Orders
                 .Select(o => new OrderIndexViewModel
                 {
@@ -39,10 +40,10 @@ namespace Inventra.Controllers
                     CustomerName = o.Customer.FullName,
                     CourierName = o.Courier.Name,
                     TrackingNumber = o.TrackingNumber,
-                    TotalPrice = o.TotalPrice,
-                    AdditionalInfo = o.AdditionalInfo
+                    TotalPrice = o.TotalPrice
                 }).ToListAsync();
 
+            // Pass the 'orders' (which is a List of OrderIndexViewModel) to the View
             return View(orders);
         }
 
@@ -70,8 +71,12 @@ namespace Inventra.Controllers
         }
 
         // GET: Orders/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            // Load dropdowns
+            ViewBag.CustomerId = new SelectList(await _context.Customers.OrderBy(x => x.FullName).ToListAsync(), "CustomerId", "FullName");
+            ViewBag.CourierId = new SelectList(await _context.Couriers.OrderBy(x => x.Name).ToListAsync(), "CourierId", "Name");
+
             return View(new OrderCreateViewModel());
         }
 
@@ -84,44 +89,47 @@ namespace Inventra.Controllers
         {
             if (!ModelState.IsValid)
             {
+                // Reload dropdowns if validation fails
+                ViewBag.CustomerId = new SelectList(await _context.Customers.OrderBy(x => x.FullName).ToListAsync(), "CustomerId", "FullName", model.CustomerId);
+                ViewBag.CourierId = new SelectList(await _context.Couriers.OrderBy(x => x.Name).ToListAsync(), "CourierId", "Name", model.CourierId);
                 return View(model);
             }
 
             var order = new Order
             {
                 Id = Guid.NewGuid(),
-                CustomerId= model.CustomerId,
-                CourierId=model.CourierId,
-                TrackingNumber=model.TrackingNumber,
-                TotalPrice=/* Add sum method in the servce*/ model.TotalPrice,
-                AdditionalInfo= model.AdditionalInfo
-
+                CustomerId = model.CustomerId,
+                CourierId = model.CourierId,
+                TrackingNumber = model.TrackingNumber,
+                AdditionalInfo = model.AdditionalInfo,
+                TotalPrice = model.TotalPrice // Replace with Service method later
             };
 
-            var couriers = _context.Couriers.ToListAsync();
-            var customers = _context.Customers.ToListAsync();
+            await _context.AddAsync(order);
+            await _context.SaveChangesAsync();
 
-            ViewBag.CourierId = new SelectList(await couriers, "Id", "Name");
-            ViewBag.CustomerId = new SelectList(await customers, "Id", "Name");
-            return View(model);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Orders/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            var order = await _context.Orders.FindAsync(id);
+            if (id == null) return NotFound();
 
-            if (order == null)
-            {
-                return NotFound();
-            }
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null) return NotFound();
+
+            // Load Dropdowns - Mark the currently selected ID as the default
+            ViewBag.CustomerId = new SelectList(await _context.Customers.OrderBy(x => x.FullName).ToListAsync(), "CustomerId", "FullName", order.CustomerId);
+            ViewBag.CourierId = new SelectList(await _context.Couriers.OrderBy(x => x.Name).ToListAsync(), "CourierId", "Name", order.CourierId);
 
             var model = new OrderIndexViewModel
             {
                 Id = order.Id,
-                CourierName = order.Courier.Name,
+                CustomerId = order.CustomerId, // Ensure this exists in your ViewModel
+                CourierId = order.CourierId,   // Ensure this exists in your ViewModel
                 TrackingNumber = order.TrackingNumber,
-                TotalPrice = /*add method in the service; look at the lines above for context*/ order.TotalPrice,
+                TotalPrice = order.TotalPrice,
                 AdditionalInfo = order.AdditionalInfo
             };
 
@@ -137,24 +145,34 @@ namespace Inventra.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ViewBag.CustomerId = new SelectList(await _context.Customers.OrderBy(x => x.FullName).ToListAsync(), "CustomerId", "FullName", model.CustomerId);
+                ViewBag.CourierId = new SelectList(await _context.Couriers.OrderBy(x => x.Name).ToListAsync(), "CourierId", "Name", model.CourierId);
                 return View(model);
             }
+            
 
             var order = await _context.Orders.FindAsync(model.Id);
+            if (order == null) return NotFound();
 
-            if (order == null)
+            // Map properties from ViewModel back to the Database Entity
+            order.CustomerId = model.CustomerId;
+            order.CourierId = model.CourierId;
+            order.TrackingNumber = model.TrackingNumber;
+            order.AdditionalInfo = model.AdditionalInfo;
+            order.TotalPrice = model.TotalPrice;
+
+            try
             {
-                return NotFound();
+                _context.Update(order);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!OrderExists(order.Id)) return NotFound();
+                else throw;
             }
 
-            model.CourierName = order.Courier.Name;
-            model.TrackingNumber=order.TrackingNumber;
-            model.TotalPrice = order.TotalPrice;
-            model.AdditionalInfo = order.AdditionalInfo;    
-
-            await _context.SaveChangesAsync();
-
-            return View(model);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Orders/Delete/5

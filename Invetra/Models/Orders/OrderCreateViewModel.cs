@@ -4,21 +4,20 @@ namespace Inventra.Models.Orders
 {
     public class OrderCreateViewModel
     {
-        [Required]
-        public Guid CustomerId { get; set; }
+        public Guid Id { get; set; }
 
-        [Required]
+        // 1. The "Working" IDs (For the Dropdowns/Database)
+        public Guid CustomerId { get; set; }
         public Guid CourierId { get; set; }
 
-        [Required]
-        [StringLength(50)]
+        // 2. The "Display" Names (For the List/Tables)
+        // We make these nullable (?) or 'null!' so they don't break the form
+        public string? CustomerName { get; set; }
+        public string? CourierName { get; set; }
+
         public string TrackingNumber { get; set; } = null!;
-
-        [Required]
         public decimal TotalPrice { get; set; }
-
-        [Required]
-        public string AdditionalInfo { get; set; } = null!;
+        public string? AdditionalInfo { get; set; }
 
     }
 }
