@@ -2,6 +2,7 @@
 using Inventra.Data.Entities;
 using Inventra.Models.OrderDetails;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventra.Controllers
@@ -38,18 +39,21 @@ namespace Inventra.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            ViewBag.ProductId = new SelectList(_context.Products.ToList(), "Id", "Name");
             return View(new OrderDetailsCreateViewModel());
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(OrderDetailsCreateViewModel model)
         {
+            ViewBag.ProductId = new SelectList(await _context.Products.ToListAsync(), "Id", "Name", model.ProductId);
 
-            var desiredProduct = await _context.Products.FindAsync(model.ProductId);
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
+
+            var desiredProduct = await _context.Products.FindAsync(model.ProductId);
 
             var orderDetail = new OrderDetails
             {
@@ -65,54 +69,54 @@ namespace Inventra.Controllers
             return View(nameof(Index));
         }
 
-        //providing the ORDER id 
-        [HttpGet]
-        public async Task<IActionResult> Edit(Guid orderId)
-        {
-            var detail = await _context.OrderDetails.FindAsync(orderId);
+        ////providing the ORDER id 
+        //[HttpGet]
+        //public async Task<IActionResult> Edit(Guid orderId)
+        //{
+        //    var detail = await _context.OrderDetails.FindAsync(orderId);
 
 
-            if (detail == null)
-            {
-                return NotFound();
-            }
+        //    if (detail == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var model = new OrderDetails
-            {
-                OrderId = detail.OrderId,
-                ProductId = detail.ProductId,
-                QTY = detail.QTY,
-                Subtotal = detail.QTY * detail.Product.Price
-            };
+        //    var model = new OrderDetails
+        //    {
+        //        OrderId = detail.OrderId,
+        //        ProductId = detail.ProductId,
+        //        QTY = detail.QTY,
+        //        Subtotal = detail.QTY * detail.Product.Price
+        //    };
 
-            return View(model);
-        }
+        //    return View(model);
+        //}
 
-        [HttpPost]
+        //[HttpPost]
 
-        public async Task<IActionResult> Edit(OrderDetailsIndexViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model); 
-            }
+        //public async Task<IActionResult> Edit(OrderDetailsIndexViewModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(model); 
+        //    }
 
-            var detail = await _context.OrderDetails.FindAsync(model.OrderId);
+        //    var detail = await _context.OrderDetails.FindAsync(model.OrderId);
 
-            if (detail == null)
-            {
-                return NotFound();
-            }
+        //    if (detail == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            detail.QTY= model.QTY;
-            detail.Subtotal= detail.QTY*detail.Product.Price;
+        //    detail.QTY= model.QTY;
+        //    detail.Subtotal= detail.QTY*detail.Product.Price;
 
-            _context.OrderDetails.Update(detail);
+        //    _context.OrderDetails.Update(detail);
 
-            await _context.SaveChangesAsync();
+        //    await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
-        }
+        //    return RedirectToAction(nameof(Index));
+        //}
 
         // GET: OrderDetails/Delete?orderId={orderId}&productId={productId}
         [HttpGet]
