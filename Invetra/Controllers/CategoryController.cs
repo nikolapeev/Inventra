@@ -1,11 +1,13 @@
 ﻿using Inventra.Data;
 using Inventra.Data.Entities;
 using Inventra.Models.Categories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventra.Controllers
 {
+    [Authorize]
     public class CategoryController : Controller
     {
         private readonly InventraDbContext _context;

@@ -1,12 +1,14 @@
 ﻿using Inventra.Data;
 using Inventra.Data.Entities;
 using Inventra.Models.OrderDetails;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventra.Controllers
 {
+    [Authorize]
     public class OrderDetailsController : Controller
     {
         private readonly InventraDbContext _context;
@@ -37,36 +39,76 @@ namespace Inventra.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult Create(Guid orderId)
         {
-            ViewBag.ProductId = new SelectList(_context.Products.ToList(), "Id", "Name");
-            return View(new OrderDetailsCreateViewModel());
+            if (orderId == Guid.Empty)
+            {
+                return NotFound("No Order ID was passed to this page.");
+            }
+
+            // 2. We MUST create an instance of your exact ViewModel to prevent the NullReferenceException
+            var viewModel = new OrderDetailsCreateViewModel
+            {
+                OrderId = orderId, // We lock the ID from the URL into the ViewModel here
+                QTY = 1            // Set a safe default quantity
+            };
+
+            // 3. Populate the dropdown list so the webpage doesn't crash trying to load products
+            ViewBag.ProductId = new SelectList(_context.Products.OrderBy(p => p.Name).ToList(), "Id", "Name");
+
+            // 4. Pass the populated ViewModel directly into the HTML page
+            return View(viewModel);
+            //ViewBag.ProductId = new SelectList(_context.Products.OrderBy(p => p.Name).ToList(), "ProductId", "Name");
+            //return View(new OrderDetailsCreateViewModel());
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(OrderDetailsCreateViewModel model)
         {
-            ViewBag.ProductId = new SelectList(await _context.Products.ToListAsync(), "Id", "Name", model.ProductId);
+            // 1. Ignore Subtotal validation since we calculate it
+            ModelState.Remove("Subtotal");
 
             if (!ModelState.IsValid)
             {
+                ViewBag.ProductId = new SelectList(await _context.Products.OrderBy(p => p.Name).ToListAsync(), "Id", "Name", model.ProductId);
                 return View(model);
             }
 
             var desiredProduct = await _context.Products.FindAsync(model.ProductId);
+            if (desiredProduct == null) return NotFound();
 
-            var orderDetail = new OrderDetails
+            // 2. Check if this product is ALREADY in this specific order
+            var existingItem = await _context.OrderDetails
+                .FirstOrDefaultAsync(od => od.OrderId == model.OrderId && od.ProductId == model.ProductId);
+
+            if (existingItem != null)
             {
-                OrderId = model.OrderId,
-                ProductId = model.ProductId,
-                QTY = model.QTY,
-                Subtotal = desiredProduct.Price * model.QTY
+                // 3. If it exists, just update the existing row!
+                existingItem.QTY += model.QTY;
+                existingItem.Subtotal = existingItem.QTY * desiredProduct.Price;
 
-            };
+                _context.OrderDetails.Update(existingItem);
+            }
+            else
+            {
+                // 4. If it doesn't exist yet, insert it as a brand new row
+                var orderDetail = new Inventra.Data.Entities.OrderDetails
+                {
+                    OrderId = model.OrderId,
+                    ProductId = model.ProductId,
+                    QTY = model.QTY,
+                    Subtotal = desiredProduct.Price * model.QTY
+                };
 
-            await _context.OrderDetails.AddAsync(orderDetail);
+                await _context.OrderDetails.AddAsync(orderDetail);
+            }
+
+            // 5. Save changes
             await _context.SaveChangesAsync();
-            return View(nameof(Index));
+
+            // 6. 🟢 THE MAGIC FIX: Redirect smoothly back to the order details page!
+            return RedirectToAction("Details", "Orders", new { id = model.OrderId });
         }
 
         ////providing the ORDER id 

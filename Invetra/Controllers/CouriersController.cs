@@ -1,17 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Inventra.Data;
+using Inventra.Data.Entities;
+using Inventra.Models.Categories;
+using Inventra.Models.Couriers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Inventra.Data;
-using Inventra.Data.Entities;
-using Inventra.Models.Couriers;
-using Inventra.Models.Categories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Inventra.Controllers
 {
+    [Authorize]
     public class CouriersController : Controller
     {
         private readonly InventraDbContext _context;

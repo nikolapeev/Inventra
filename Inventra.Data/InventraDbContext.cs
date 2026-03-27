@@ -51,8 +51,6 @@ namespace Inventra.Data
         public DbSet<Courier> Couriers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetails> OrderDetails { get; set; }
-        public DbSet<GoodsReceipt> GoodsReceipts { get; set; }
-        public DbSet<GoodsReceiptLine> GoodsReceiptLines { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
     }
 }

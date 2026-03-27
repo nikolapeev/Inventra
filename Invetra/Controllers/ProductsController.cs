@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Inventra.Data;
+using Inventra.Data.Entities;
+using Inventra.Models.Products;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Inventra.Data;
-using Inventra.Data.Entities;
-using Inventra.Models.Products;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Inventra.Controllers
 {
+    [Authorize]
     public class ProductsController : Controller
     {
         private readonly InventraDbContext _context;
@@ -144,7 +146,7 @@ namespace Inventra.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ProductIndexViewModel model )
+        public async Task<IActionResult> Edit(ProductEditViewModel model )
         {
            if(!ModelState.IsValid)
             {
@@ -159,6 +161,13 @@ namespace Inventra.Controllers
             }
 
             product.Name = model.Name;
+            product.Description = model.Description;
+            product.Price = model.Price;
+            product.StockQuantity = model.StockQuantity;
+            product.CategoryId = model.CategoryId;
+            product.ImageURL = model.ImageURL;
+            product.BatchNumber = model.BatchNumber;
+            product.WarehouseLocationId = model.WarehouseLocationId;
 
             await _context.SaveChangesAsync();
 

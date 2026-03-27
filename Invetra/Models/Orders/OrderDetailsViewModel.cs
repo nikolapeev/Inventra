@@ -12,6 +12,6 @@
         public string TrackingNumber { get; set; } = null!;
         public decimal TotalPrice { get; set; }
         public string AdditionalInfo { get; set; } = null!;
-
+        public List<Inventra.Data.Entities.OrderDetails> Products { get; set; } = new List<Inventra.Data.Entities.OrderDetails>();
     }
 }

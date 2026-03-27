@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Inventra.Data;
+using Inventra.Data.Entities;
+using Inventra.Models.Orders;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Inventra.Data;
-using Inventra.Data.Entities;
-using Inventra.Models.Orders;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Inventra.Controllers
 {
+    [Authorize]
     public class OrdersController : Controller
     {
         private readonly InventraDbContext _context;
@@ -50,24 +52,34 @@ namespace Inventra.Controllers
         // GET: Orders/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
+            if (id == null) return NotFound();
+
+            // 1. Grab the main Order from the database
             var order = await _context.Orders
-                .Where(o => o.Id == id)
-                .Select(o => new OrderDetailsViewModel
-                {
-                    Id = o.Id,
-                    CustomerName = o.Customer.FullName,
-                    CourierName = o.Courier.Name,
-                    TrackingNumber = o.TrackingNumber,
-                    TotalPrice = /*add method to service- sum each orderDetail associated with the order,*/ o.TotalPrice,
-                    AdditionalInfo= o.AdditionalInfo
-                }).FirstOrDefaultAsync();
+                // .Include(o => o.Customer) // Uncomment this if you have a Customer linked!
+                .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (order == null)
+            if (order == null) return NotFound();
+
+            // 2. 🟢 THE MISSING PIECE: Grab all OrderDetails for this specific order
+            var orderItems = await _context.OrderDetails
+                .Include(od => od.Product) // We MUST Include the Product so we can see the Name!
+                .Where(od => od.OrderId == id)
+                .ToListAsync();
+
+            // 3. Pack everything into your ViewModel
+            var viewModel = new Inventra.Models.Orders.OrderDetailsViewModel
             {
-                return NotFound();
-            }
+                Id = order.Id,
+                CustomerName = order.Customer?.FullName, // Adjust to match your exact properties
+                TrackingNumber = order.TrackingNumber,
+                AdditionalInfo=order.AdditionalInfo,
+                TotalPrice = order.TotalPrice,
+                // 🟢 Pass the list we just fetched into the ViewModel!
+                Products = orderItems
+            };
 
-            return View(order);
+            return View(viewModel);
         }
 
         // GET: Orders/Create
@@ -89,11 +101,12 @@ namespace Inventra.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // Reload dropdowns if validation fails
                 ViewBag.CustomerId = new SelectList(await _context.Customers.OrderBy(x => x.FullName).ToListAsync(), "CustomerId", "FullName", model.CustomerId);
                 ViewBag.CourierId = new SelectList(await _context.Couriers.OrderBy(x => x.Name).ToListAsync(), "CourierId", "Name", model.CourierId);
                 return View(model);
             }
+
+             
 
             var order = new Order
             {
@@ -119,15 +132,15 @@ namespace Inventra.Controllers
             var order = await _context.Orders.FindAsync(id);
             if (order == null) return NotFound();
 
-            // Load Dropdowns - Mark the currently selected ID as the default
+            
             ViewBag.CustomerId = new SelectList(await _context.Customers.OrderBy(x => x.FullName).ToListAsync(), "CustomerId", "FullName", order.CustomerId);
             ViewBag.CourierId = new SelectList(await _context.Couriers.OrderBy(x => x.Name).ToListAsync(), "CourierId", "Name", order.CourierId);
 
             var model = new OrderIndexViewModel
             {
                 Id = order.Id,
-                CustomerId = order.CustomerId, // Ensure this exists in your ViewModel
-                CourierId = order.CourierId,   // Ensure this exists in your ViewModel
+                CustomerId = order.CustomerId, 
+                CourierId = order.CourierId,   
                 TrackingNumber = order.TrackingNumber,
                 TotalPrice = order.TotalPrice,
                 AdditionalInfo = order.AdditionalInfo
