@@ -41,5 +41,23 @@ namespace Inventra.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user != null)
+            {
+                await _userManager.DeleteAsync(user);
+            }
+            else
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction(nameof(Index));
+
+        }
     }
 }

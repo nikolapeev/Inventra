@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<Inventra.Data.Entities.InventraUser>
-
+@User
 <h2>Управление на достъпа</h2>
 
 <table class="table">
@@ -7,6 +7,7 @@
         <tr>
             <th>Потребител</th>
             <th>Действия (Дай роля)</th>
+            <th>Current Role</th>
         </tr>
     </thead>
     <tbody>
@@ -18,11 +19,16 @@
                     <form asp-action="AssignRole" method="post" style="display:inline;">
                         <input type="hidden" name="userId" value="@user.Id" />
                         
-                        <button name="roleName" value="Administrator" class="btn btn-sm btn-danger">Admin</button>
-                        <button name="roleName" value="InventoryManager" class="btn btn-sm btn-primary">Стоки</button>
-                        <button name="roleName" value="OrderManager" class="btn btn-sm btn-success">Поръчки</button>
+                        <button name="roleName" value="Administrator" class="btn btn-sm btn-success">Admin</button>
+                        <button name="roleName" value="InventoryManager" class="btn btn-sm btn-primary">Inventory</button>
+                        <button name="roleName" value="OrderManager" class="btn btn-sm btn-success">Orders</button>
+                    </form>
+                    <form asp-action="DeleteUser" method="post" style="display:inline">
+                        <input type="hidden" name="userId" value="@user.Id" />
+                        <button class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 </td>
+                <td>@user</td>
             </tr>
         }
     </tbody>
