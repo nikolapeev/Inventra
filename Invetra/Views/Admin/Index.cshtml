@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Inventra.Data.Entities.InventraUser>
+
+<h2>Управление на достъпа</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Потребител</th>
+            <th>Действия (Дай роля)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Email</td>
+                <td>
+                    <form asp-action="AssignRole" method="post" style="display:inline;">
+                        <input type="hidden" name="userId" value="@user.Id" />
+                        
+                        <button name="roleName" value="Administrator" class="btn btn-sm btn-danger">Admin</button>
+                        <button name="roleName" value="InventoryManager" class="btn btn-sm btn-primary">Стоки</button>
+                        <button name="roleName" value="OrderManager" class="btn btn-sm btn-success">Поръчки</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

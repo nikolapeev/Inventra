@@ -65,6 +65,45 @@ public class Program
             }
         }
 
+        using (var scope = app.Services.CreateScope())
+        {
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<InventraUser>>();
+
+            // 1. Първо създаваме ролите (както досега)
+            string[] roles = { "Administrator", "OrderManager", "InventoryManager" };
+            foreach (var role in roles)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(role)); 
+                }
+            }
+
+            // 2. Създаваме администраторския профил
+            var adminEmail = "admin@inventra.com";
+             var adminUser = await userManager.FindByEmailAsync(adminEmail); 
+
+            if (adminUser == null)
+            {
+                var newAdmin = new InventraUser
+                {
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    EmailConfirmed = true // Маркираме го като потвърден
+                };
+
+                // Създаваме потребителя с парола по твой избор
+                 var result = await userManager.CreateAsync(newAdmin, "Admin123!"); 
+
+                if (result.Succeeded)
+                {
+                    // Присвояваме му ролята Administrator
+                     await userManager.AddToRoleAsync(newAdmin, "Administrator"); 
+                }
+            }
+        }
+
         app.Run();
     }
 }
