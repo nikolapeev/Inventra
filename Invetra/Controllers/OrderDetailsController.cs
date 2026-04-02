@@ -66,7 +66,7 @@ namespace Inventra.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(OrderDetailsCreateViewModel model)
         {
-            // 1. Ignore Subtotal validation since we calculate it
+
             ModelState.Remove("Subtotal");
 
             if (!ModelState.IsValid)
@@ -78,13 +78,12 @@ namespace Inventra.Controllers
             var desiredProduct = await _context.Products.FindAsync(model.ProductId);
             if (desiredProduct == null) return NotFound();
 
-            // 2. Check if this product is ALREADY in this specific order
+            // Check if this product is already in this specific order
             var existingItem = await _context.OrderDetails
                 .FirstOrDefaultAsync(od => od.OrderId == model.OrderId && od.ProductId == model.ProductId);
 
             if (existingItem != null)
             {
-                // 3. If it exists, just update the existing row!
                 existingItem.QTY += model.QTY;
                 existingItem.Subtotal = existingItem.QTY * desiredProduct.Price;
 
@@ -92,7 +91,6 @@ namespace Inventra.Controllers
             }
             else
             {
-                // 4. If it doesn't exist yet, insert it as a brand new row
                 var orderDetail = new Inventra.Data.Entities.OrderDetails
                 {
                     OrderId = model.OrderId,
@@ -104,10 +102,8 @@ namespace Inventra.Controllers
                 await _context.OrderDetails.AddAsync(orderDetail);
             }
 
-            // 5. Save changes
             await _context.SaveChangesAsync();
 
-            // 6. 🟢 THE MAGIC FIX: Redirect smoothly back to the order details page!
             return RedirectToAction("Details", "Orders", new { id = model.OrderId });
         }
 
@@ -173,7 +169,6 @@ namespace Inventra.Controllers
                 return NotFound();
             }
 
-            // Reuse the OrderDetails entity as the view model (consistent with Edit GET style)
             return View(detail);
         }
 

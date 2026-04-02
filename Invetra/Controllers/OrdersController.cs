@@ -21,20 +21,10 @@ namespace Inventra.Controllers
         {
             _context = context;
         }
-        ///
-        /// 
-        ///
-        /// 
-        //TRANSFER TO ORDER SERVICE METHOD BELOW
-        ///
-        /// 
-        ///
-        ///
 
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-            // You MUST project into the ViewModel here
             var orders = await _context.Orders
                 .Select(o => new OrderIndexViewModel
                 {
@@ -54,28 +44,27 @@ namespace Inventra.Controllers
         {
             if (id == null) return NotFound();
 
-            // 1. Grab the main Order from the database
+            
             var order = await _context.Orders
                 // .Include(o => o.Customer) // Uncomment this if you have a Customer linked!
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (order == null) return NotFound();
 
-            // 2. 🟢 THE MISSING PIECE: Grab all OrderDetails for this specific order
+            
             var orderItems = await _context.OrderDetails
-                .Include(od => od.Product) // We MUST Include the Product so we can see the Name!
+                .Include(od => od.Product) 
                 .Where(od => od.OrderId == id)
                 .ToListAsync();
 
-            // 3. Pack everything into your ViewModel
+     
             var viewModel = new Inventra.Models.Orders.OrderDetailsViewModel
             {
                 Id = order.Id,
-                CustomerName = order.Customer?.FullName, // Adjust to match your exact properties
+                CustomerName = order.Customer?.FullName,
                 TrackingNumber = order.TrackingNumber,
                 AdditionalInfo=order.AdditionalInfo,
                 TotalPrice = order.TotalPrice,
-                // 🟢 Pass the list we just fetched into the ViewModel!
                 Products = orderItems
             };
 
@@ -167,7 +156,6 @@ namespace Inventra.Controllers
             var order = await _context.Orders.FindAsync(model.Id);
             if (order == null) return NotFound();
 
-            // Map properties from ViewModel back to the Database Entity
             order.CustomerId = model.CustomerId;
             order.CourierId = model.CourierId;
             order.TrackingNumber = model.TrackingNumber;
