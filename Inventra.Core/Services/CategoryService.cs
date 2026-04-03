@@ -1,11 +1,11 @@
 ﻿using Inventra.Core.Contracts;
+using Inventra.Data;
+using Inventra.Data.Entities;
 using Inventra.Models.Categories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Inventra.Data;
-using Inventra.Data.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace Inventra.Core.Services
 {

@@ -1,6 +1,5 @@
 ﻿using Inventra.Data;
 using Inventra.Data.Entities;
-using Inventra.Models.Categories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,22 +9,16 @@ namespace Inventra.Controllers
     [Authorize]
     public class CategoryController : Controller
     {
-        private readonly ICategoryService _context;
+        private readonly ICategoryService _categoryService;
 
-        public CategoryController(InventraDbContext context)
+        public CategoryController(ICategoryService categoryService)
         {
-            _context = context;
+            _categoryService = categoryService;
         }   
 
         public async Task<IActionResult> Index()
         {
-            var categories= await _context.Categories
-                .Select(c=>new CategoryIndexViewModel
-                {
-                    CategoryId=c.CategoryId,
-                    Name=c.Name
-                })
-                .ToListAsync();
+            var categories = await _categoryService.GetAllAsync();
             return View(categories);
         }
 
@@ -43,14 +36,7 @@ namespace Inventra.Controllers
                 return View(model);
             }
 
-            var category = new Category
-            {
-                CategoryId = Guid.NewGuid(),
-                Name = model.Name
-            };
-
-            await _context.Categories.AddAsync(category);
-            await _context.SaveChangesAsync();
+            await _categoryService.CreateAsync(model);
 
             return RedirectToAction(nameof(Index));
         }
