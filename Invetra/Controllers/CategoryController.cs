@@ -10,7 +10,7 @@ namespace Inventra.Controllers
     [Authorize]
     public class CategoryController : Controller
     {
-        private readonly InventraDbContext _context;
+        private readonly ICategoryService _context;
 
         public CategoryController(InventraDbContext context)
         {

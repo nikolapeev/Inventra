@@ -28,7 +28,7 @@ public class Program
         })
             .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<InventraDbContext>();
-
+        builder.Services.AddScoped<ICategoryService, CategoryService>();
         var app = builder.Build();
 
         if (!app.Environment.IsDevelopment())

@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Inventra.Core\Inventra.Core.csproj" />
     <ProjectReference Include="..\Inventra.Data\Inventra.Data.csproj" />
   </ItemGroup>
 
