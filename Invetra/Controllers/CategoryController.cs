@@ -1,8 +1,8 @@
-﻿using Inventra.Data;
-using Inventra.Data.Entities;
+﻿using Inventra.Core.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Inventra.Models.Categories;
 
 namespace Inventra.Controllers
 {
