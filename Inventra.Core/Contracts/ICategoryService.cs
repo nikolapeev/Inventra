@@ -1,4 +1,4 @@
-﻿using Inventra.Models.Categories;
+﻿using Inventra.Core.ViewModels.Categories;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -1,4 +1,5 @@
-﻿using Inventra.Data;
+﻿using Inventra.Core.ViewModels.OrderDetails;
+using Inventra.Data;
 using Inventra.Data.Entities;
 using Inventra.Models.OrderDetails;
 using Microsoft.AspNetCore.Authorization;

@@ -1,4 +1,4 @@
-﻿namespace Inventra.Models.OrderDetails
+﻿namespace Inventra.Core.ViewModels.OrderDetails
 {
     public class OrderDetailsDetailsViewModel
     {

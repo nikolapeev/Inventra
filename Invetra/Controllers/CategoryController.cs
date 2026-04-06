@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Inventra.Models.Categories;
+using Inventra.Core.ViewModels.Categories;
 
 namespace Inventra.Controllers
 {
@@ -44,14 +44,7 @@ namespace Inventra.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
-            var category = await _context.Categories
-                .Where(c => c.CategoryId == id)
-                .Select(c => new CategoryDetailsViewModel
-                {
-                    CategoryId = c.CategoryId,
-                    Name = c.Name
-                })
-                .FirstOrDefaultAsync();
+            var category =await _categoryService.GetByIdAsync(id);
 
             if(category == null)
             {
@@ -64,7 +57,7 @@ namespace Inventra.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _categoryService.GetByIdAsync(id);
 
             if (category == null)
             {
@@ -88,17 +81,18 @@ namespace Inventra.Controllers
                 return View(model);
             }
 
-            var category = await _context.Categories.FindAsync(model.CategoryId);
+            //var category = await _categoryService.GetByIdAsync(model.CategoryId);
 
-            if (category == null)
-            {
-                return NotFound();
-            }
+            //if (category == null)
+            //{
+            //    return NotFound();
+            //}
 
-            category.Name = model.Name;
+            //category.Name = model.Name;
 
 
-            await _context.SaveChangesAsync();
+            //await _context.SaveChangesAsync();
+            await _categoryService.UpdateAsync(model);
 
             return RedirectToAction(nameof(Index));
         }
@@ -106,15 +100,16 @@ namespace Inventra.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var cat= await _context.Categories.FindAsync(id);
+            //var cat= await _context.Categories.FindAsync(id);
 
-            if (cat == null)
-            {
-                return NotFound();
-            }
+            //if (cat == null)
+            //{
+            //    return NotFound();
+            //}
 
-            _context.Categories.Remove(cat);
-            await _context.SaveChangesAsync();
+            //_context.Categories.Remove(cat);
+            //await _context.SaveChangesAsync();
+            await _categoryService.DeleteAsync(id);
             return RedirectToAction("Index");
         }
     }

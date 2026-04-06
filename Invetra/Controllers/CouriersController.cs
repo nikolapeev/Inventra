@@ -1,15 +1,9 @@
-﻿using Inventra.Data;
+﻿using Inventra.Core.ViewModels.Couriers;
+using Inventra.Data;
 using Inventra.Data.Entities;
-using Inventra.Models.Categories;
-using Inventra.Models.Couriers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Inventra.Controllers
 {
@@ -38,24 +32,24 @@ namespace Inventra.Controllers
         }
 
         // GET: Couriers/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            var courier=await _context.Couriers
-                .Where(c=>c.CourierId==id)
-                .Select(c=>new CourierDetailsViewModel
-                {
-                    CourierId=c.CourierId,
-                    Name=c.Name,
-                    Phone=c.Phone
-                }).FirstOrDefaultAsync();
+        //public async Task<IActionResult> Details(Guid? id)
+        //{
+        //    var courier=await _context.Couriers
+        //        .Where(c=>c.CourierId==id)
+        //        .Select(c=>new CourierDetailsViewModel
+        //        {
+        //            CourierId=c.CourierId,
+        //            Name=c.Name,
+        //            Phone=c.Phone
+        //        }).FirstOrDefaultAsync();
 
-            if (courier == null)
-            {
-                return NotFound();
-            }
+        //    if (courier == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(courier);
-        }
+        //    return View(courier);
+        //}
 
         // GET: Couriers/Create
         public IActionResult Create()
@@ -166,9 +160,9 @@ namespace Inventra.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CourierExists(Guid id)
-        {
-            return _context.Couriers.Any(e => e.CourierId == id);
-        }
+        //private bool CourierExists(Guid id)
+        //{
+        //    return _context.Couriers.Any(e => e.CourierId == id);
+        //}
     }
 }

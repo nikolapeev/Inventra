@@ -1,17 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Inventra.Models.Orders
+namespace Inventra.Core.ViewModels.Orders
 {
     public class OrderCreateViewModel
     {
         public Guid Id { get; set; }
-
-        // 1. The "Working" IDs (For the Dropdowns/Database)
         public Guid CustomerId { get; set; }
         public Guid CourierId { get; set; }
-
-        // 2. The "Display" Names (For the List/Tables)
-        // We make these nullable (?) or 'null!' so they don't break the form
         public string? CustomerName { get; set; }
         public string? CourierName { get; set; }
 

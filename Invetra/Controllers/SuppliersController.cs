@@ -1,6 +1,6 @@
-﻿using Inventra.Data;
+﻿using Inventra.Core.ViewModels.Suppliers;
+using Inventra.Data;
 using Inventra.Data.Entities;
-using Inventra.Models.Suppliers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;

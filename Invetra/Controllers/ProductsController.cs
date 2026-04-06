@@ -1,4 +1,5 @@
-﻿using Inventra.Data;
+﻿using Inventra.Core.ViewModels.Products;
+using Inventra.Data;
 using Inventra.Data.Entities;
 using Inventra.Models.Products;
 using Microsoft.AspNetCore.Authorization;

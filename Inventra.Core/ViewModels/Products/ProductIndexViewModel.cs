@@ -1,4 +1,4 @@
-﻿namespace Inventra.Models.Products
+﻿namespace Inventra.Core.ViewModels.Products
 {
     public class ProductIndexViewModel
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Inventra.Models.Products
+namespace Inventra.Core.ViewModels.Products
 {
     public class ProductCreateViewModel
     {

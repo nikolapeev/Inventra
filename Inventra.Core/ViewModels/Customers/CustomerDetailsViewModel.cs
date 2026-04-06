@@ -1,4 +1,4 @@
-﻿namespace Inventra.Models.Customers
+﻿namespace Inventra.Core.ViewModels.Customers
 {
     public class CustomerDetailsViewModel
     {

@@ -1,7 +1,7 @@
-﻿using Inventra.Data;
+﻿using Inventra.Core.ViewModels.Customers;
+using Inventra.Data;
 using Inventra.Data.Entities;
 using Inventra.Models.Categories;
-using Inventra.Models.Customers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;

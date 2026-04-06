@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Inventra.Models.Couriers
+namespace Inventra.Core.ViewModels.Couriers
 {
     public class CourierCreateViewModel
     {

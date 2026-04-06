@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Inventra.Models.Customers
+namespace Inventra.Core.ViewModels.Customers
 {
     public class CustomerEditViewModel
     {

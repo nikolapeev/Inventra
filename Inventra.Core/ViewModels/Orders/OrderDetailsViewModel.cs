@@ -1,7 +1,6 @@
-﻿namespace Inventra.Models.Orders
+﻿namespace Inventra.Core.ViewModels.Orders
 {
-    /// <summary> check customer names and why it isnt id with gemini
-    /// 
+    
     public class OrderDetailsViewModel
     {
         public Guid Id { get; set; }
@@ -12,6 +11,6 @@
         public string TrackingNumber { get; set; } = null!;
         public decimal TotalPrice { get; set; }
         public string AdditionalInfo { get; set; } = null!;
-        public List<Inventra.Data.Entities.OrderDetails> Products { get; set; } = new List<Inventra.Data.Entities.OrderDetails>();
+        public List<Data.Entities.OrderDetails> Products { get; set; } = new List<Data.Entities.OrderDetails>();
     }
 }

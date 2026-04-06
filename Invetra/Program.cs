@@ -2,6 +2,8 @@ using Inventra.Data;
 using Inventra.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Inventra.Core.Contracts;
+using Inventra.Core.Services;
 
 namespace Inventra;
 
@@ -28,7 +30,10 @@ public class Program
         })
             .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<InventraDbContext>();
+
         builder.Services.AddScoped<ICategoryService, CategoryService>();
+        builder.Services.AddScoped<ICourierService, CourierService>();
+        
         var app = builder.Build();
 
         if (!app.Environment.IsDevelopment())

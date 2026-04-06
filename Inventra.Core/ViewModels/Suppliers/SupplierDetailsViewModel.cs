@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Inventra.Models.Suppliers
+namespace Inventra.Core.ViewModels.Suppliers
 {
 
     public class SupplierDetailsViewModel

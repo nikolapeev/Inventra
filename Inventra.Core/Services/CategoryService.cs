@@ -1,7 +1,7 @@
 ﻿using Inventra.Core.Contracts;
+using Inventra.Core.ViewModels.Categories;
 using Inventra.Data;
 using Inventra.Data.Entities;
-using Inventra.Models.Categories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
