@@ -1,4 +1,4 @@
-namespace Invetra.Models
+namespace Inventra.Models
 {
     public class ErrorViewModel
     {

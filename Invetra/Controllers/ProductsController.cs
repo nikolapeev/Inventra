@@ -1,67 +1,37 @@
-﻿using Inventra.Core.ViewModels.Products;
+﻿using Inventra.Core.Contracts;
+using Inventra.Core.ViewModels.Products;
 using Inventra.Data;
 using Inventra.Data.Entities;
-using Inventra.Models.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Inventra.Controllers
 {
     [Authorize]
     public class ProductsController : Controller
     {
-        private readonly InventraDbContext _context;
+        private readonly IProductService _productService;
 
-        public ProductsController(InventraDbContext context)
+        public ProductsController(IProductService productService)
         {
-            _context = context;
+            _productService = productService;
         }
 
         // GET: Products
         public async Task<IActionResult> Index()
         {
             
-            var products = await _context.Products
-                .Select(p => new ProductIndexViewModel
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    CategoryName = p.Category.Name, 
-                    SupplierName = p.Supplier.Name, 
-                    Price = p.Price,
-                    StockQuantity = p.StockQuantity,
-                    BatchNumber = p.BatchNumber,
-                    WarehouseLocationId = p.WarehouseLocationId
-                }).ToListAsync();
+            var products =await _productService.GetAllAsync();
 
             return View(products);
         }
 
         // GET: Products/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
-            var product = await _context.Products
-                .Where(p=>p.Id == id)
-                .Select(p => new ProductDetailsViewModel
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    CategoryName = p.Category.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    StockQuantity = p.StockQuantity,
-                    ImageURL = p.ImageURL,
-                    BatchNumber = p.BatchNumber,
-                    WarehouseLocationId = p.WarehouseLocationId,
-                    AddedBy = p.AddedBy
-                })
-            .FirstOrDefaultAsync(); 
+            var product = await _productService.GetByIdAsync(id);
 
             if (product == null)
             {
@@ -95,23 +65,23 @@ namespace Inventra.Controllers
                 return View(model);
             }
 
-            var product = new Product
-            {
-                Id = Guid.NewGuid(),
-                Name = model.Name,
-                CategoryId = model.CategoryId,
-                SupplierId = model.SupplierId, 
-                Description = model.Description,
-                Price = model.Price,
-                StockQuantity = model.StockQuantity,
-                ImageURL = model.ImageURL,
-                BatchNumber = model.BatchNumber,
-                WarehouseLocationId = model.WarehouseLocationId,
-                AddedBy = User.Identity?.Name ?? "System" // Added this as your Entity marks it [Required]
-            };
+            //var product = new Product
+            //{
+            //    Id = Guid.NewGuid(),
+            //    Name = model.Name,
+            //    CategoryId = model.CategoryId,
+            //    SupplierId = model.SupplierId, 
+            //    Description = model.Description,
+            //    Price = model.Price,
+            //    StockQuantity = model.StockQuantity,
+            //    ImageURL = model.ImageURL,
+            //    BatchNumber = model.BatchNumber,
+            //    WarehouseLocationId = model.WarehouseLocationId,
+            //    AddedBy = User.Identity?.Name ?? "System" // Added this as your Entity marks it [Required]
+            //};
 
-            await _context.Products.AddAsync(product);
-            await _context.SaveChangesAsync();
+            //await _context.Products.AddAsync(product);
+            //await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }

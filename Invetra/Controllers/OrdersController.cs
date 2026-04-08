@@ -58,7 +58,7 @@ namespace Inventra.Controllers
                 .ToListAsync();
 
      
-            var viewModel = new Inventra.Models.Orders.OrderDetailsViewModel
+            var viewModel = new Inventra.Core.ViewModels.Orders.OrderDetailsViewModel
             {
                 Id = order.Id,
                 CustomerName = order.Customer?.FullName,

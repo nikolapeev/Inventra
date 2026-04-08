@@ -1,38 +1,85 @@
 ﻿using Inventra.Core.Contracts;
 using Inventra.Core.ViewModels.Couriers;
+using Inventra.Data;
+using Inventra.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Inventra.Core.Services
 {
     public class CourierService : ICourierService
     {
-        public Task CreateAsync(CourierCreateViewModel model)
+        private readonly InventraDbContext context;
+
+        public CourierService(InventraDbContext context)
         {
-            throw new NotImplementedException();
+            this.context = context;
         }
 
-        public Task DeleteAsync(Guid id)
+        public async Task<IEnumerable<CourierIndexViewModel>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await context.Couriers
+                .Select(c => new CourierIndexViewModel
+                {
+                    CourierId = c.CourierId,
+                    Name = c.Name,
+                    Phone = c.Phone
+                })
+                .ToListAsync();
         }
 
-        public Task<IEnumerable<CourierIndexViewModel>> GetAllAsync()
+        public async Task<CourierIndexViewModel> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await context.Couriers
+                 .Where(c => c.CourierId == id)
+                 .Select(c => new CourierIndexViewModel
+                 {
+                     CourierId = c.CourierId,
+                     Name = c.Name,
+                     Phone = c.Phone
+                 }).FirstOrDefaultAsync();
         }
 
-        public Task<CourierIndexViewModel> GetByIdAsync(Guid id)
+        public async Task CreateAsync(CourierCreateViewModel model)
         {
-            throw new NotImplementedException();
+            var courier = new Courier
+            {
+                CourierId = Guid.NewGuid(),
+                Name = model.Name,
+                Phone = model.Phone
+            };
+
+            await context.Couriers.AddAsync(courier);
+            await context.SaveChangesAsync();
         }
 
-        public Task UpdateAsync(CourierIndexViewModel model)
+        public async Task UpdateAsync(CourierIndexViewModel model)
         {
-            throw new NotImplementedException();
+            var courier = await context.Couriers.FindAsync(model.CourierId);
+            if (courier == null)
+            {
+                return;
+            }
+
+            courier.Name = model.Name;
+            courier.Phone = model.Phone;
+
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            var courier = await context.Couriers.FindAsync(id);
+            if (courier == null)
+            {
+                return;
+            }
+
+            context.Couriers.Remove(courier);
+            await context.SaveChangesAsync();
         }
     }
 }

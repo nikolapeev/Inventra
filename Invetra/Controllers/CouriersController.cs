@@ -1,4 +1,6 @@
-﻿using Inventra.Core.ViewModels.Couriers;
+﻿using Inventra.Core.Contracts;
+using Inventra.Core.Services;
+using Inventra.Core.ViewModels.Couriers;
 using Inventra.Data;
 using Inventra.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -10,24 +12,17 @@ namespace Inventra.Controllers
     [Authorize]
     public class CouriersController : Controller
     {
-        private readonly InventraDbContext _context;
+        private readonly ICourierService _courierService;
 
-        public CouriersController(InventraDbContext context)
+        public CouriersController(ICourierService courierService)
         {
-            _context = context;
+            _courierService = courierService;
         }
 
         // GET: Couriers
         public async Task<IActionResult> Index()
         {
-            var couriers = await _context.Couriers
-                .Select(c => new CourierIndexViewModel
-                {
-                    CourierId = c.CourierId,
-                    Name=c.Name,
-                    Phone=c.Phone
-                })
-                .ToListAsync();
+            var couriers = await _courierService.GetAllAsync();
             return View(couriers);
         }
 
@@ -69,15 +64,7 @@ namespace Inventra.Controllers
                 return View(model); 
             }
 
-            var courier = new Courier
-            {
-                CourierId = Guid.NewGuid(),
-                Name = model.Name,
-                Phone = model.Phone
-            };
-            
-            await _context.Couriers.AddAsync(courier);
-            await _context.SaveChangesAsync();
+            await _courierService.CreateAsync(model);
 
             return RedirectToAction(nameof(Index));
         }
@@ -85,7 +72,7 @@ namespace Inventra.Controllers
         // GET: Couriers/Edit/5
         public async Task<IActionResult> Edit(Guid id)
         {
-            var courier = await _context.Couriers.FindAsync(id);
+            var courier = await _courierService.GetByIdAsync(id);
 
             if (courier == null)
             {
@@ -113,52 +100,49 @@ namespace Inventra.Controllers
                 return View(model);
             }
 
-            var courier = await _context.Couriers.FindAsync(model.CourierId);
-
-            if (courier == null)
-            {
-                return NotFound();  
-            }
-
-            courier.Name = model.Name;
-            courier.Phone = model.Phone;
-
-            await _context.SaveChangesAsync();
+            await _courierService.UpdateAsync(model);
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Couriers/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var courier = await _context.Couriers
-                .FirstOrDefaultAsync(m => m.CourierId == id);
-            if (courier == null)
-            {
-                return NotFound();
-            }
-
-            return View(courier);
-        }
-
-        // POST: Couriers/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var courier = await _context.Couriers.FindAsync(id);
-            if (courier != null)
-            {
-                _context.Couriers.Remove(courier);
-            }
-
-            await _context.SaveChangesAsync();
+            await _courierService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
+
+        ////// GET: Couriers/Delete/5
+        ////public async Task<IActionResult> Delete(Guid? id)
+        ////{
+        ////    if (id == null)
+        ////    {
+        ////        return NotFound();
+        ////    }
+
+        ////    var courier = await _context.Couriers
+        ////        .FirstOrDefaultAsync(m => m.CourierId == id);
+        ////    if (courier == null)
+        ////    {
+        ////        return NotFound();
+        ////    }
+
+        ////    return View(courier);
+        ////}
+
+        ////// POST: Couriers/Delete/5
+        ////[HttpPost, ActionName("Delete")]
+        ////[ValidateAntiForgeryToken]
+        ////public async Task<IActionResult> DeleteConfirmed(Guid id)
+        ////{
+        ////    var courier = await _context.Couriers.FindAsync(id);
+        ////    if (courier != null)
+        ////    {
+        ////        _context.Couriers.Remove(courier);
+        ////    }
+
+        ////    await _context.SaveChangesAsync();
+        ////    return RedirectToAction(nameof(Index));
+        ////}
 
         //private bool CourierExists(Guid id)
         //{

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Inventra.Core.Contracts;
 using Inventra.Core.Services;
+using Inventra.Controllers;
 
 namespace Inventra;
 
@@ -33,6 +34,7 @@ public class Program
 
         builder.Services.AddScoped<ICategoryService, CategoryService>();
         builder.Services.AddScoped<ICourierService, CourierService>();
+        builder.Services.AddScoped<ICustomerService, CustomerService>();
         
         var app = builder.Build();
 

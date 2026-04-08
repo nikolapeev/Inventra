@@ -1,4 +1,4 @@
-using Invetra.Models;
+using Inventra.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

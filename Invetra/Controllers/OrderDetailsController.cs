@@ -1,7 +1,5 @@
 ﻿using Inventra.Core.ViewModels.OrderDetails;
 using Inventra.Data;
-using Inventra.Data.Entities;
-using Inventra.Models.OrderDetails;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -108,56 +106,7 @@ namespace Inventra.Controllers
             return RedirectToAction("Details", "Orders", new { id = model.OrderId });
         }
 
-        ////providing the ORDER id 
-        //[HttpGet]
-        //public async Task<IActionResult> Edit(Guid orderId)
-        //{
-        //    var detail = await _context.OrderDetails.FindAsync(orderId);
-
-
-        //    if (detail == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var model = new OrderDetails
-        //    {
-        //        OrderId = detail.OrderId,
-        //        ProductId = detail.ProductId,
-        //        QTY = detail.QTY,
-        //        Subtotal = detail.QTY * detail.Product.Price
-        //    };
-
-        //    return View(model);
-        //}
-
-        //[HttpPost]
-
-        //public async Task<IActionResult> Edit(OrderDetailsIndexViewModel model)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return View(model); 
-        //    }
-
-        //    var detail = await _context.OrderDetails.FindAsync(model.OrderId);
-
-        //    if (detail == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    detail.QTY= model.QTY;
-        //    detail.Subtotal= detail.QTY*detail.Product.Price;
-
-        //    _context.OrderDetails.Update(detail);
-
-        //    await _context.SaveChangesAsync();
-
-        //    return RedirectToAction(nameof(Index));
-        //}
-
-        // GET: OrderDetails/Delete?orderId={orderId}&productId={productId}
+        
         [HttpGet]
         public async Task<IActionResult> Delete(Guid orderId, Guid productId)
         {
