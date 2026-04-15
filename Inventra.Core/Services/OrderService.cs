@@ -18,6 +18,7 @@ namespace Inventra.Core.Services
         {
             _context = context;
         }
+
         public async Task CreateAsync(OrderCreateViewModel model)
         {
             var order = new Order
@@ -27,7 +28,6 @@ namespace Inventra.Core.Services
                 CourierId = model.CourierId,
                 TrackingNumber = model.TrackingNumber,
                 AdditionalInfo = model.AdditionalInfo,
-                TotalPrice = model.TotalPrice // Replace with Service method later
             };
 
             await _context.AddAsync(order);
@@ -42,7 +42,7 @@ namespace Inventra.Core.Services
                 return;
             }
 
-            _context.Remove(order);
+            _context.Orders.Remove(order);
             await _context.SaveChangesAsync();
         }
 
@@ -72,7 +72,8 @@ namespace Inventra.Core.Services
         public async Task<OrderDetailsViewModel?> GetDetailsById(Guid id)
         {
             var order = await _context.Orders
-                 .Include(o => o.Customer) // Uncomment this if you have a Customer linked!
+                 .Include(o => o.Customer) 
+                 .Include(o=> o.Courier)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (order == null) 
@@ -91,10 +92,11 @@ namespace Inventra.Core.Services
             return new Inventra.Core.ViewModels.Orders.OrderDetailsViewModel
             {
                 Id = order.Id,
-                CustomerName = order.Customer?.FullName,
+                CustomerName = order.Customer?.FullName ?? "NO customer found",
+                CourierName = order.Courier.Name,
                 TrackingNumber = order.TrackingNumber,
                 AdditionalInfo = order.AdditionalInfo,
-                TotalPrice = order.TotalPrice,
+                TotalPrice =  order.TotalPrice, // await SumOrderTotal(id),
                 Products = orderItems
             };
 
@@ -112,7 +114,7 @@ namespace Inventra.Core.Services
             order.CourierId = model.CourierId;
             order.TrackingNumber = model.TrackingNumber;
             order.AdditionalInfo = model.AdditionalInfo;
-            order.TotalPrice = model.TotalPrice;
+            //order.TotalPrice = model.TotalPrice;
 
             try
             {
@@ -139,6 +141,17 @@ namespace Inventra.Core.Services
                 return false; 
             }
             else return true;
+        }
+
+        public async Task<decimal> SumOrderTotal(Guid id)
+        {
+            decimal total = 0;
+            var details= await _context.OrderDetails.Where(od=>od.OrderId == id).ToListAsync();
+            foreach (var detail in details)
+            {
+                total += detail.Subtotal;
+            }
+            return total;
         }
     }
 }

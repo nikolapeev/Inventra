@@ -1,4 +1,5 @@
-﻿using Inventra.Core.ViewModels.OrderDetails;
+﻿using Inventra.Core.Contracts;
+using Inventra.Core.ViewModels.OrderDetails;
 using Inventra.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,32 +11,32 @@ namespace Inventra.Controllers
     [Authorize]
     public class OrderDetailsController : Controller
     {
-        private readonly InventraDbContext _context;
+        private readonly IOrderDetailsService _odService;
 
-        public OrderDetailsController(InventraDbContext context)
+        public OrderDetailsController(IOrderDetailsService odService)
         {
-            _context = context;
+            _odService = odService;
         }
 
-        public async Task<IActionResult> Details(Guid id)
-        {
-            var orderDetails = await _context.OrderDetails
-                .Where(od => od.OrderId == id)
-                .Select(od => new OrderDetailsDetailsViewModel
-                {
-                    ProductName = od.Product.Name,
-                    QTY = od.QTY,
-                    Subtotal = od.Product.Price * od.QTY
-                })
-                .ToListAsync();
+        //public async Task<IActionResult> Details(Guid id)
+        //{
+        //    var orderDetails = await _context.OrderDetails
+        //        .Where(od => od.OrderId == id)
+        //        .Select(od => new OrderDetailsDetailsViewModel
+        //        {
+        //            ProductName = od.Product.Name,
+        //            QTY = od.QTY,
+        //            Subtotal = od.Product.Price * od.QTY
+        //        })
+        //        .ToListAsync();
 
-            if (orderDetails == null || !orderDetails.Any())
-            {
-                return NotFound();
-            }
+        //    if (orderDetails == null || !orderDetails.Any())
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(orderDetails);
-        }
+        //    return View(orderDetails);
+        //}
 
         [HttpGet]
         public IActionResult Create(Guid orderId)
@@ -74,69 +75,53 @@ namespace Inventra.Controllers
                 return View(model);
             }
 
-            var desiredProduct = await _context.Products.FindAsync(model.ProductId);
-            if (desiredProduct == null) return NotFound();
+            //var desiredProduct = await _context.Products.FindAsync(model.ProductId);
+            //if (desiredProduct == null) return NotFound();
 
-            // Check if this product is already in this specific order
-            var existingItem = await _context.OrderDetails
-                .FirstOrDefaultAsync(od => od.OrderId == model.OrderId && od.ProductId == model.ProductId);
+            //// Check if this product is already in this specific order
+            //var existingItem = await _context.OrderDetails
+            //    .FirstOrDefaultAsync(od => od.OrderId == model.OrderId && od.ProductId == model.ProductId);
 
-            if (existingItem != null)
-            {
-                existingItem.QTY += model.QTY;
-                existingItem.Subtotal = existingItem.QTY * desiredProduct.Price;
+            //var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == model.OrderId);
 
-                _context.OrderDetails.Update(existingItem);
-            }
-            else
-            {
-                var orderDetail = new Inventra.Data.Entities.OrderDetails
-                {
-                    OrderId = model.OrderId,
-                    ProductId = model.ProductId,
-                    QTY = model.QTY,
-                    Subtotal = desiredProduct.Price * model.QTY
-                };
+            //if (existingItem != null)
+            //{
+            //    existingItem.QTY += model.QTY;
+            //    existingItem.Subtotal = existingItem.QTY * desiredProduct.Price;
 
-                await _context.OrderDetails.AddAsync(orderDetail);
-            }
+            //    order.TotalPrice += existingItem.Subtotal;
 
-            await _context.SaveChangesAsync();
+            //    _context.OrderDetails.Update(existingItem);
+            //    _context.Orders.Update(order);
+            //}
+            //else
+            //{
+            //    var orderDetail = new Inventra.Data.Entities.OrderDetails
+            //    {
+            //        OrderId = model.OrderId,
+            //        ProductId = model.ProductId,
+            //        QTY = model.QTY,
+            //        Subtotal = desiredProduct.Price * model.QTY
+            //    };
+
+            //    order.TotalPrice += orderDetail.Subtotal;
+            //    _context.Orders.Update(order);
+
+            //    await _context.OrderDetails.AddAsync(orderDetail);
+            //}
+
+            //await _context.SaveChangesAsync();
+
+            await _odService.CreateAsync(model);
 
             return RedirectToAction("Details", "Orders", new { id = model.OrderId });
         }
 
-        
-        [HttpGet]
-        public async Task<IActionResult> Delete(Guid orderId, Guid productId)
-        {
-            var detail = await _context.OrderDetails
-                .Include(od => od.Product)
-                .FirstOrDefaultAsync(od => od.OrderId == orderId && od.ProductId == productId);
-
-            if (detail == null)
-            {
-                return NotFound();
-            }
-
-            return View(detail);
-        }
-
-        // POST: OrderDetails/Delete
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid orderId, Guid productId)
         {
-            var detail = await _context.OrderDetails
-                .FirstOrDefaultAsync(od => od.OrderId == orderId && od.ProductId == productId);
-
-            if (detail == null)
-            {
-                return NotFound();
-            }
-
-            _context.OrderDetails.Remove(detail);
-            await _context.SaveChangesAsync();
+            await _odService.DeleteAsync(orderId, productId);
 
             return RedirectToAction(nameof(Index));
         }

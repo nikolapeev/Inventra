@@ -96,16 +96,16 @@ namespace Inventra.Controllers
         }
 
         // GET: Orders/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             if (id == null) return NotFound();
-
-            var order = await _context.Orders.FindAsync(id);
+                
+            var order = await _orderService.GetOrderById(id);
             if (order == null) return NotFound();
 
             
-            ViewBag.CustomerId = new SelectList(await _context.Customers.OrderBy(x => x.FullName).ToListAsync(), "CustomerId", "FullName", order.CustomerId);
-            ViewBag.CourierId = new SelectList(await _context.Couriers.OrderBy(x => x.Name).ToListAsync(), "CourierId", "Name", order.CourierId);
+            ViewBag.CustomerId = new SelectList(await _orderService.GetCustomerList(), "CustomerId", "FullName", order.CustomerId);
+            ViewBag.CourierId = new SelectList(await _orderService.GetCourierList(), "CourierId", "Name", order.CourierId);
 
             var model = new OrderIndexViewModel
             {

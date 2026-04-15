@@ -25,6 +25,8 @@ namespace Inventra.Core.Contracts
 
         public Task<Order?> GetOrderById(Guid id);
 
-        public bool OrderExists(Guid id);     
+        public bool OrderExists(Guid id);  
+        
+        public Task<decimal> SumOrderTotal(Guid id);
     }
 }

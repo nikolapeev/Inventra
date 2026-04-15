@@ -11,7 +11,6 @@ namespace Inventra.Core.ViewModels.Orders
         public string? CourierName { get; set; }
 
         public string TrackingNumber { get; set; } = null!;
-        public decimal TotalPrice { get; set; }
         public string? AdditionalInfo { get; set; }
 
     }
