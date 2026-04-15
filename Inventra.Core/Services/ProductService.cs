@@ -19,7 +19,7 @@ namespace Inventra.Core.Services
         {
             this.context = context;
         }
-        public async Task CreateAsync(ProductCreateViewModel model)
+        public async Task CreateAsync(ProductCreateViewModel model, string? currentUserName)
         {
             var product = new Product
             {
@@ -33,16 +33,33 @@ namespace Inventra.Core.Services
                 ImageURL = model.ImageURL,
                 BatchNumber = model.BatchNumber,
                 WarehouseLocationId = model.WarehouseLocationId,
-                AddedBy = User.Identity?.Name ?? "System" // Added this as your Entity marks it [Required]
+                AddedBy = currentUserName ?? "System"
             };
 
             await context.Products.AddAsync(product);
             await context.SaveChangesAsync();
         }
 
-        public Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var product= await context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return;
+            }
+
+            context.Products.Remove(product);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<List<Supplier>> ListSupplier()
+        {
+            return await context.Suppliers.OrderBy(s => s.Name).ToListAsync();
+        }
+
+        public async Task<List<Category>> ListCategory()
+        {
+            return await context.Categories.OrderBy(s => s.Name).ToListAsync();
         }
 
         public async Task<List<ProductIndexViewModel>> GetAllAsync()
@@ -61,7 +78,7 @@ namespace Inventra.Core.Services
                 }).ToListAsync();
         }
 
-        public async Task<ProductDetailsViewModel?> GetByIdAsync(Guid id)
+        public async Task<ProductDetailsViewModel?> GetDetailsByIdAsync(Guid id)
         {
             return await context.Products
                 .Where(p => p.Id == id)
@@ -81,9 +98,30 @@ namespace Inventra.Core.Services
             .FirstOrDefaultAsync();
         }
 
-        public Task UpdateAsync(ProductIndexViewModel model)
+        public async Task UpdateAsync(ProductEditViewModel model)
         {
-            throw new NotImplementedException();
+            var product = await context.Products.FindAsync(model.Id);
+
+            if (product == null)
+            {
+                return ;
+            }
+
+            product.Name = model.Name;
+            product.Description = model.Description;
+            product.Price = model.Price;
+            product.StockQuantity = model.StockQuantity;
+            product.CategoryId = model.CategoryId;
+            product.ImageURL = model.ImageURL;
+            product.BatchNumber = model.BatchNumber;
+            product.WarehouseLocationId = model.WarehouseLocationId;
+
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<Product?> GetByIdAsync(Guid id)
+        {
+            return await context.Products.FindAsync(id);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Inventra.Controllers
         // GET: Products/Details/5
         public async Task<IActionResult> Details(Guid id)
         {
-            var product = await _productService.GetByIdAsync(id);
+            var product = await _productService.GetDetailsByIdAsync(id);
 
             if (product == null)
             {
@@ -44,8 +44,8 @@ namespace Inventra.Controllers
         // GET: Products/Create
         public async Task<IActionResult> CreateAsync()
         {
-            ViewBag.SupplierId = new SelectList(await _context.Suppliers.OrderBy(s => s.Name).ToListAsync(), "SupplierId", "Name");
-            ViewBag.CategoryId = new SelectList(await _context.Categories.OrderBy(c => c.Name).ToListAsync(), "CategoryId", "Name");
+            ViewBag.SupplierId = new SelectList(await _productService.ListSupplier(), "SupplierId", "Name");
+            ViewBag.CategoryId = new SelectList(await _productService.ListCategory(), "CategoryId", "Name");
 
             return View(new ProductCreateViewModel());
         }
@@ -59,8 +59,8 @@ namespace Inventra.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.SupplierId = new SelectList(await _context.Suppliers.OrderBy(s => s.Name).ToListAsync(), "SupplierId", "Name", model.SupplierId);
-                ViewBag.CategoryId = new SelectList(await _context.Categories.OrderBy(c => c.Name).ToListAsync(), "CategoryId", "Name", model.CategoryId);
+                ViewBag.SupplierId = new SelectList(await _productService.ListSupplier(), "SupplierId", "Name", model.SupplierId);
+                ViewBag.CategoryId = new SelectList(await _productService.ListCategory(), "CategoryId", "Name", model.CategoryId);
 
                 return View(model);
             }
@@ -83,13 +83,15 @@ namespace Inventra.Controllers
             //await _context.Products.AddAsync(product);
             //await _context.SaveChangesAsync();
 
+            await _productService.CreateAsync(model , User.Identity?.Name);
+
             return RedirectToAction(nameof(Index));
         }
 
         // GET: Products/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _productService.GetByIdAsync(id);
 
             if (product == null)
             {
@@ -119,70 +121,22 @@ namespace Inventra.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ProductEditViewModel model )
         {
-           if(!ModelState.IsValid)
+            if(!ModelState.IsValid)
             {
                 return View(model);
             }
 
-           var product = await _context.Products.FindAsync(model.Id);   
-
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            product.Name = model.Name;
-            product.Description = model.Description;
-            product.Price = model.Price;
-            product.StockQuantity = model.StockQuantity;
-            product.CategoryId = model.CategoryId;
-            product.ImageURL = model.ImageURL;
-            product.BatchNumber = model.BatchNumber;
-            product.WarehouseLocationId = model.WarehouseLocationId;
-
-            await _context.SaveChangesAsync();
+            await _productService.UpdateAsync(model);
 
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Products/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            await _productService.DeleteAsync(id);
 
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .Include(p => p.WarehouseLocationId)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
-        }
-
-        // POST: Products/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-            }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ProductExists(Guid id)
-        {
-            return _context.Products.Any(e => e.Id == id);
         }
     }
 }

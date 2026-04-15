@@ -35,7 +35,10 @@ public class Program
         builder.Services.AddScoped<ICategoryService, CategoryService>();
         builder.Services.AddScoped<ICourierService, CourierService>();
         builder.Services.AddScoped<ICustomerService, CustomerService>();
-        
+        builder.Services.AddScoped<IProductService, ProductService>();
+        builder.Services.AddScoped<ISupplierService, SupplierService>();
+        builder.Services.AddScoped<IOrderService, OrderService>();
+
         var app = builder.Build();
 
         if (!app.Environment.IsDevelopment())

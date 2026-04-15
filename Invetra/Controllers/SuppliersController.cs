@@ -1,4 +1,5 @@
-﻿using Inventra.Core.ViewModels.Suppliers;
+﻿using Inventra.Core.Contracts;
+using Inventra.Core.ViewModels.Suppliers;
 using Inventra.Data;
 using Inventra.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -15,52 +16,43 @@ namespace Inventra.Controllers
     [Authorize]
     public class SuppliersController : Controller
     {
-        private readonly InventraDbContext _context;
+        private readonly ISupplierService _supplierService;
 
-        public SuppliersController(InventraDbContext context)
+        public SuppliersController(ISupplierService supplierService)
         {
-            _context = context;
+            _supplierService = supplierService;
         }
 
         // GET: Suppliers
         public async Task<IActionResult> Index()
         {
-            var suppliers = await _context.Suppliers
-                .Select(s=>new SupplierIndexViewModel
-                {
-                    SupplierId = s.SupplierId,
-                    Name = s.Name,
-                    EIK = s.EIK,
-                    PhoneNumber = s.PhoneNumber,
-                    Email = s.Email
-                })
-                .ToListAsync();
+            var suppliers = await _supplierService.GetAllSuppliers();
 
             return View(suppliers);
         }
 
         // GET: Suppliers/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            var supplier = await _context.Suppliers
-                .Where(s => s.SupplierId == id)
-                .Select(s => new SupplierDetailsViewModel
-                {
-                    SupplierId = s.SupplierId,
-                    Name = s.Name,
-                    EIK = s.EIK,
-                    PhoneNumber = s.PhoneNumber,
-                    Email = s.Email
-                })
-                .FirstOrDefaultAsync();
+        //public async Task<IActionResult> Details(Guid? id)
+        //{
+        //    var supplier = await _context.Suppliers
+        //        .Where(s => s.SupplierId == id)
+        //        .Select(s => new SupplierDetailsViewModel
+        //        {
+        //            SupplierId = s.SupplierId,
+        //            Name = s.Name,
+        //            EIK = s.EIK,
+        //            PhoneNumber = s.PhoneNumber,
+        //            Email = s.Email
+        //        })
+        //        .FirstOrDefaultAsync();
 
-            if (supplier == null)
-            {
-                return NotFound();
-            }
+        //    if (supplier == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(supplier);
-        }
+        //    return View(supplier);
+        //}
 
         // GET: Suppliers/Create
         public IActionResult Create()
@@ -80,25 +72,15 @@ namespace Inventra.Controllers
                 return View(model);
             }
 
-            var supplier = new Supplier
-            {
-                SupplierId = Guid.NewGuid(),
-                Name = model.Name,
-                EIK = model.EIK,
-                PhoneNumber = model.PhoneNumber,
-                Email = model.Email
-            };
-
-            await _context.Suppliers.AddAsync(supplier);
-            await _context.SaveChangesAsync();
+            await _supplierService.CreateAsync(model);
 
             return RedirectToAction(nameof(Index));
         }
 
         // GET: Suppliers/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid id)
         {
-            var supplier = await _context.Suppliers.FindAsync(id);
+            var supplier = await _supplierService.GetByIdAsync(id);
 
             if (supplier == null)
             {
@@ -122,63 +104,24 @@ namespace Inventra.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(SupplierIndexViewModel model )
+        public async Task<IActionResult> Edit(SupplierEditViewModel model )
         {
             if(!ModelState.IsValid)
             {
                 return View(model);
             }   
 
-            var supplier = await _context.Suppliers.FindAsync(model.SupplierId);    
-
-            if(supplier == null)
-            {
-                return NotFound();
-            }
-
-            supplier.Name = model.Name;
-
-            await _context.SaveChangesAsync();
+            await _supplierService.UpdateAsync(model);
 
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Suppliers/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            await _supplierService.DeleteAsync(id);
 
-            var supplier = await _context.Suppliers
-                .FirstOrDefaultAsync(m => m.SupplierId == id);
-            if (supplier == null)
-            {
-                return NotFound();
-            }
-
-            return View(supplier);
-        }
-
-        // POST: Suppliers/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var supplier = await _context.Suppliers.FindAsync(id);
-            if (supplier != null)
-            {
-                _context.Suppliers.Remove(supplier);
-            }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool SupplierExists(Guid id)
-        {
-            return _context.Suppliers.Any(e => e.SupplierId == id);
         }
     }
 }
