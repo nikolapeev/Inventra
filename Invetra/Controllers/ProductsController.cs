@@ -91,6 +91,9 @@ namespace Inventra.Controllers
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(Guid id)
         {
+            ViewBag.SupplierId = new SelectList(await _productService.ListSupplier(), "SupplierId", "Name");
+            ViewBag.CategoryId = new SelectList(await _productService.ListCategory(), "CategoryId", "Name");
+
             var product = await _productService.GetByIdAsync(id);
 
             if (product == null)

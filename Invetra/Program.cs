@@ -38,6 +38,7 @@ public class Program
         builder.Services.AddScoped<IProductService, ProductService>();
         builder.Services.AddScoped<ISupplierService, SupplierService>();
         builder.Services.AddScoped<IOrderService, OrderService>();
+        builder.Services.AddScoped<IOrderDetailsService, OrderDetailsService>();
 
         var app = builder.Build();
 

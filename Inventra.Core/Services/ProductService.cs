@@ -87,6 +87,7 @@ namespace Inventra.Core.Services
                     Id = p.Id,
                     Name = p.Name,
                     CategoryName = p.Category.Name,
+                    SupplierName= p.Supplier.Name,
                     Description = p.Description,
                     Price = p.Price,
                     StockQuantity = p.StockQuantity,
@@ -109,6 +110,7 @@ namespace Inventra.Core.Services
 
             product.Name = model.Name;
             product.Description = model.Description;
+            product.SupplierId = model.SupplierId;
             product.Price = model.Price;
             product.StockQuantity = model.StockQuantity;
             product.CategoryId = model.CategoryId;

@@ -1,4 +1,6 @@
 ﻿using Inventra.Core.Contracts;
+using Inventra.Core.Services;
+using Inventra.Core.ViewModels.Categories;
 using Inventra.Core.ViewModels.OrderDetails;
 using Inventra.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -18,32 +20,12 @@ namespace Inventra.Controllers
             _odService = odService;
         }
 
-        //public async Task<IActionResult> Details(Guid id)
-        //{
-        //    var orderDetails = await _context.OrderDetails
-        //        .Where(od => od.OrderId == id)
-        //        .Select(od => new OrderDetailsDetailsViewModel
-        //        {
-        //            ProductName = od.Product.Name,
-        //            QTY = od.QTY,
-        //            Subtotal = od.Product.Price * od.QTY
-        //        })
-        //        .ToListAsync();
-
-        //    if (orderDetails == null || !orderDetails.Any())
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(orderDetails);
-        //}
-
         [HttpGet]
-        public IActionResult Create(Guid orderId)
+        public async Task<IActionResult> Create(Guid orderId)
         {
             if (orderId == Guid.Empty)
             {
-                return NotFound("No Order ID was passed to this page.");
+                return NotFound();
             }
 
             // 2. We MUST create an instance of your exact ViewModel to prevent the NullReferenceException
@@ -54,12 +36,11 @@ namespace Inventra.Controllers
             };
 
             // 3. Populate the dropdown list so the webpage doesn't crash trying to load products
-            ViewBag.ProductId = new SelectList(_context.Products.OrderBy(p => p.Name).ToList(), "Id", "Name");
+            ViewBag.ProductId = new SelectList(await _odService.GetAllProducts(), "Id", "Name");
 
             // 4. Pass the populated ViewModel directly into the HTML page
-            return View(viewModel);
-            //ViewBag.ProductId = new SelectList(_context.Products.OrderBy(p => p.Name).ToList(), "ProductId", "Name");
-            //return View(new OrderDetailsCreateViewModel());
+            //return View(viewModel);
+            return PartialView("_AddProductPartial", viewModel);
         }
 
         [HttpPost]
@@ -71,46 +52,9 @@ namespace Inventra.Controllers
 
             if (!ModelState.IsValid)
             {
-                ViewBag.ProductId = new SelectList(await _context.Products.OrderBy(p => p.Name).ToListAsync(), "Id", "Name", model.ProductId);
+                ViewBag.ProductId = new SelectList(await _odService.GetAllProducts(), "Id", "Name", model.ProductId);
                 return View(model);
             }
-
-            //var desiredProduct = await _context.Products.FindAsync(model.ProductId);
-            //if (desiredProduct == null) return NotFound();
-
-            //// Check if this product is already in this specific order
-            //var existingItem = await _context.OrderDetails
-            //    .FirstOrDefaultAsync(od => od.OrderId == model.OrderId && od.ProductId == model.ProductId);
-
-            //var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == model.OrderId);
-
-            //if (existingItem != null)
-            //{
-            //    existingItem.QTY += model.QTY;
-            //    existingItem.Subtotal = existingItem.QTY * desiredProduct.Price;
-
-            //    order.TotalPrice += existingItem.Subtotal;
-
-            //    _context.OrderDetails.Update(existingItem);
-            //    _context.Orders.Update(order);
-            //}
-            //else
-            //{
-            //    var orderDetail = new Inventra.Data.Entities.OrderDetails
-            //    {
-            //        OrderId = model.OrderId,
-            //        ProductId = model.ProductId,
-            //        QTY = model.QTY,
-            //        Subtotal = desiredProduct.Price * model.QTY
-            //    };
-
-            //    order.TotalPrice += orderDetail.Subtotal;
-            //    _context.Orders.Update(order);
-
-            //    await _context.OrderDetails.AddAsync(orderDetail);
-            //}
-
-            //await _context.SaveChangesAsync();
 
             await _odService.CreateAsync(model);
 
@@ -119,11 +63,68 @@ namespace Inventra.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid orderId, Guid productId)
+        public async Task<IActionResult> Delete(Guid orderId, Guid productId)
         {
             await _odService.DeleteAsync(orderId, productId);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Orders", new { id = orderId });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid orderId, Guid productId)
+        {
+            var od = await _odService.GetByIdAsync( orderId, productId);
+
+            if (od== null)
+            {
+                return NotFound();
+            }
+
+            var model = new OrderDetailsEditViewModel
+            {
+                QTY = od.QTY,
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(OrderDetailsEditViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            
+            await _odService.UpdateAsync(model);
+
+            return RedirectToAction("Details", "Orders", new { id = model.OrderId });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditQtyPartial(Guid orderId, Guid productId)
+        {
+            var od = await _odService.GetByIdAsync(orderId, productId);
+            if (od == null) return NotFound();
+
+            var model = new OrderDetailsEditViewModel
+            {
+                OrderId = od.OrderId,
+                ProductId = od.ProductId,
+                QTY = od.QTY
+            };
+
+            return PartialView("_EditQtyPartial", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteOne(Guid orderId, Guid productId)
+        {
+            await _odService.DeleteOneAsync(orderId, productId);
+
+            return RedirectToAction("Details", "Orders", new { id = orderId });
+
         }
     }
 }

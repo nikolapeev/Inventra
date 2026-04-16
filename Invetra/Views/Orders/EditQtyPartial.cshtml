@@ -1,0 +1,23 @@
+﻿@using Inventra.Core.ViewModels.OrderDetails
+@model OrderDetailsEditViewModel
+@using Inventra.Data
+
+<div class="modal-header">
+    <h5 class="modal-title">Update Quantity</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<form id="editQtyForm">
+    <div class="modal-body">
+        @Html.HiddenFor(m => m.OrderId)
+        @Html.HiddenFor(m => m.ProductId)
+        
+        <div class="form-group">
+            <label>Quantity</label>
+            <input asp-for="QTY" class="form-control" type="number" min="1" />
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" onclick="submitQtyChange()" class="btn btn-primary">Save Changes</button>
+    </div>
+</form>

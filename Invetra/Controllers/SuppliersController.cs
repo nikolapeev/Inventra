@@ -31,30 +31,6 @@ namespace Inventra.Controllers
             return View(suppliers);
         }
 
-        // GET: Suppliers/Details/5
-        //public async Task<IActionResult> Details(Guid? id)
-        //{
-        //    var supplier = await _context.Suppliers
-        //        .Where(s => s.SupplierId == id)
-        //        .Select(s => new SupplierDetailsViewModel
-        //        {
-        //            SupplierId = s.SupplierId,
-        //            Name = s.Name,
-        //            EIK = s.EIK,
-        //            PhoneNumber = s.PhoneNumber,
-        //            Email = s.Email
-        //        })
-        //        .FirstOrDefaultAsync();
-
-        //    if (supplier == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(supplier);
-        //}
-
-        // GET: Suppliers/Create
         public IActionResult Create()
         {
             return View(new SupplierCreateViewModel());

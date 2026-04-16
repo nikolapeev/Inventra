@@ -12,7 +12,7 @@ namespace Inventra.Core.ViewModels.OrderDetails
 
         [Required]
         [Range(1, int.MaxValue)]
-        public int QTY { get; set; }
+        public int QTY { get; set; } = 1;
 
         //is calculated
         public decimal Subtotal { get; set; }

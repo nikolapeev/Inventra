@@ -30,6 +30,9 @@ namespace Inventra.Core.ViewModels.Products
         public string BatchNumber { get; set; }=null!;
 
         [Required]
+        public Guid SupplierId { get; set; } 
+
+        [Required]
         public string WarehouseLocationId { get; set; } = null!;
     }
 }
