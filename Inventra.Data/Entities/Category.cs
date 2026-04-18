@@ -13,7 +13,8 @@ namespace Inventra.Data.Entities
         public Guid CategoryId { get; set; }
 
         [Required]
-        [MaxLength(50)]
+        [MinLength(3, ErrorMessage = "The name must be between 3 and 100 characters long.")]
+        [MaxLength(100, ErrorMessage = "The name must be between 3 and 100 characters long.")]
         public string Name { get; set; } = null!;
 
         public ICollection<Product> Products { get; set; }

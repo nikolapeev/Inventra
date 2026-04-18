@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Inventra.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Administrator, OrderManager")]
     public class OrdersController : Controller
     {
         private readonly IOrderService _orderService;

@@ -25,13 +25,16 @@ namespace Inventra.Data.Entities
         public Courier Courier { get; set; } = null!;
 
         [Required]
-        [StringLength(50)]
+        [MaxLength(100,ErrorMessage ="The tracking number can be a maximum of 100 characters long")]
+        [RegularExpression(@"^[a-zA-Z0-9-]+$", ErrorMessage = "Field can only contain letters , numbers and hyphens.")]
         public string TrackingNumber { get; set; } = null!;
 
         [Required]
         public decimal TotalPrice { get; set; }
 
         [Required]
+        [RegularExpression(@"^(?i)ETA.+$"
+        ,ErrorMessage ="The additional information must start with the estimated time of arrival (eg. eta: or ETA:)" )]
         public string AdditionalInfo { get; set; } = null!;
 
         public ICollection<OrderDetails> OrderDetails { get; set; } = [];

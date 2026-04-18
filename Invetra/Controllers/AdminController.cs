@@ -59,5 +59,29 @@ namespace Inventra.Controllers
             return RedirectToAction(nameof(Index));
 
         }
+
+        //[HttpGet]
+        //public async Task<string> GetCurrentRole(string userId)
+        //{
+        //    var user=await _userManager.FindByIdAsync(userId);
+
+        //    if (user != null)
+        //    {
+        //        return "N/A";
+        //    }
+
+        //    var currentRoles = await _userManager.GetRolesAsync(user);
+
+        //    if (currentRoles == null)
+        //    {
+        //        return "Not authorized";
+        //    }
+        //    else
+        //    {
+        //        return string.Join(',',currentRoles);
+        //    }
+
+
+        //}
     }
 }

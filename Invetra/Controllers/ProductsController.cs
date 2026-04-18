@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventra.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Administrator, InventoryManager")]
     public class ProductsController : Controller
     {
         private readonly IProductService _productService;

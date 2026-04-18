@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventra.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Administrator, OrderManager")]
     public class OrderDetailsController : Controller
     {
         private readonly IOrderDetailsService _odService;

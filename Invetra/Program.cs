@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Inventra.Core.Contracts;
 using Inventra.Core.Services;
 using Inventra.Controllers;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Inventra;
 
@@ -13,7 +14,6 @@ public class Program
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
         
         builder.Services.AddControllersWithViews();
 
@@ -65,7 +65,7 @@ public class Program
         using(var scope = app.Services.CreateScope())
         {
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            string[] roleNames = { "Administratot", "ProductManager", "OrderManager" };
+            string[] roleNames = { "Administrator", "InventoryManager", "OrderManager" };
 
             foreach(var roleName in roleNames)
             {
@@ -78,6 +78,7 @@ public class Program
 
         using (var scope = app.Services.CreateScope())
         {
+            var dbContext= scope.ServiceProvider.GetRequiredService<InventraDbContext>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<InventraUser>>();
 
@@ -112,6 +113,16 @@ public class Program
                     // Присвояваме му ролята Administrator
                      await userManager.AddToRoleAsync(newAdmin, "Administrator"); 
                 }
+            }
+
+            try
+            {
+                InventraDbSeeder.Seed(dbContext);
+            }
+            catch (Exception ex)
+            {
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred seeding the DB.");
             }
         }
 

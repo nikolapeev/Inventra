@@ -1,5 +1,8 @@
 ﻿@model IEnumerable<Inventra.Data.Entities.InventraUser>
-@User
+@using Inventra.Controllers
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<Inventra.Data.Entities.InventraUser> userManager
+
 <h2>Управление на достъпа</h2>
 
 <table class="table">
@@ -28,7 +31,16 @@
                         <button class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 </td>
-                <td>@user</td>
+                <td>
+                    @if (string.Join(',', await userManager.GetRolesAsync(user)).Length == 0)
+                    {
+                        <strong>Not Authorized</strong>
+                    }
+                    else
+                    {
+                        @string.Join(',', await userManager.GetRolesAsync(user));
+                    }
+                </td>
             </tr>
         }
     </tbody>

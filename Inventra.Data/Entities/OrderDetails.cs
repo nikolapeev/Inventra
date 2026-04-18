@@ -18,6 +18,7 @@ namespace Inventra.Data.Entities
         public Product Product { get; set; }    
 
         [Required]
+        [Range(1,10000 , ErrorMessage ="Value cannot be less than 1 and more than 10000")]
         public int QTY { get; set; }
 
         [Required]

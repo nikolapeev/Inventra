@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventra.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Administrator")]
     public class CustomersController : Controller
     {
         private readonly ICustomerService _customerService;

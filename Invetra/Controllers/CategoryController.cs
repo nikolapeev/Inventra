@@ -6,7 +6,7 @@ using Inventra.Core.ViewModels.Categories;
 
 namespace Inventra.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrator , InventoryManager")]
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;

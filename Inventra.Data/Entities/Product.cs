@@ -14,7 +14,8 @@ namespace Inventra.Data.Entities
         public Guid Id { get; set; }
 
         [Required]
-        [MaxLength(200)]
+        [MinLength(3,ErrorMessage ="The name must be between 3 and 500 characters long")]
+        [MaxLength(500, ErrorMessage = "The name must be between 3 and 500 characters long")]
         public string Name { get; set; } = null!;
 
         [Required]
@@ -23,13 +24,15 @@ namespace Inventra.Data.Entities
         public Category Category { get; set; } = null!;
 
         [Required]
-        [MaxLength(200)]
+        [StringLength(5000,MinimumLength =20, ErrorMessage ="Description must be between 20 and 5000 characters long")]
         public string Description { get; set; } = null!;
 
         [Required]
-        public decimal Price { get; set; }
+        [Range(0.01,100000,ErrorMessage = "Value must be between 0.01 and 100000")]
+        public decimal Price { get; set; } 
 
         [Required]
+        [Range(1, 100000, ErrorMessage = "Value must be between 1 and 100000")]
         public int StockQuantity { get; set; }
 
         [Required]
@@ -41,14 +44,15 @@ namespace Inventra.Data.Entities
         public Supplier Supplier { get; set; } = null!;
 
         [Required]
+        [RegularExpression(@"^[a-zA-Z0-9-]+$", ErrorMessage = "Field can only contain letters , numbers and hyphens.")]
         public string BatchNumber { get; set; } = null!;
 
         [Required]
         public string AddedBy { get; set; } = null!;
 
         [Required]
+        [RegularExpression(@"^[A-Z0-9\-]+$",ErrorMessage ="Location ID can contain only capital letters , numbers and a hyphen/minus")]
         public string WarehouseLocationId { get; set; } = null!;
-        
 
 
         public ICollection<OrderDetails> OrderDetails { get; set; } = new List<OrderDetails>();

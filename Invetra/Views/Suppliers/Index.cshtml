@@ -44,7 +44,7 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.SupplierId">Edit</a> |
-                <form asp-action="Delete" asp-route-id="@item.SupplierId" asp-controller="Supplier">
+                <form asp-action="Delete" asp-route-id="@item.SupplierId" method="post" asp-controller="Suppliers">
                     <button class="btn-sm btn-inline btn-danger">
                         Delete
                     </button>
