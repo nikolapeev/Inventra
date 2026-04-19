@@ -18,6 +18,10 @@ namespace Inventra.Core.ViewModels.Orders
         public string TrackingNumber { get; set; } = null!;
 
         [Required]
+        [Range(1, 5000)]
+        public DateOnly ETA { get; set; }
+
+        [Required]
         public decimal TotalPrice { get; set; }
 
         [Required]

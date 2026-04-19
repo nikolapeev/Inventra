@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Inventra.Data.Entities;
+using Inventra.Data.Enums;
 
 namespace Inventra.Data.Entities
 {
@@ -33,9 +34,15 @@ namespace Inventra.Data.Entities
         public decimal TotalPrice { get; set; }
 
         [Required]
-        [RegularExpression(@"^(?i)ETA.+$"
-        ,ErrorMessage ="The additional information must start with the estimated time of arrival (eg. eta: or ETA:)" )]
+        [MinLength(10)]
         public string AdditionalInfo { get; set; } = null!;
+
+        [Required]
+        [Range(1,5000)]
+        public DateOnly ETA { get; set;  }
+
+        [Required]
+        public Statuses Status { get; set; } 
 
         public ICollection<OrderDetails> OrderDetails { get; set; } = [];
 

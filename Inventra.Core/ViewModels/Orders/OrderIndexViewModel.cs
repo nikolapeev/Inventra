@@ -1,8 +1,11 @@
-﻿namespace Inventra.Core.ViewModels.Orders
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Inventra.Core.ViewModels.Orders
 {
     public class OrderIndexViewModel
     {
         public Guid Id { get; set; }
+        public DateOnly ETA { get; set; }
 
         public string? CustomerName { get; set; }
         public string? CourierName { get; set; }

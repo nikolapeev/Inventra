@@ -14,7 +14,8 @@
         public string Address { get; set; } = null!;
         public string PostalCode { get; set; } = null!;
 
+        public string CompanyName {  get; set; } = null!;
         public string EIK { get; set; } = null!;
-        public string ZDDS { get; set; } = null!;
+        public bool ZDDS { get; set; } 
     }
 }

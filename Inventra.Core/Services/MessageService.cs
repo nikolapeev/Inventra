@@ -1,5 +1,9 @@
 ﻿using Inventra.Core.Contracts;
+using Inventra.Core.ViewModels.Customers;
 using Inventra.Core.ViewModels.Messages;
+using Inventra.Data;
+using Inventra.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,19 +14,49 @@ namespace Inventra.Core.Services
 {
     public class MessageService : IMessageService
     {
-        public Task<MessageCreateViewModel> CreateAsync(MessageCreateViewModel model)
+        private readonly InventraDbContext _context;
+
+        public MessageService(InventraDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task DeleteAsync(Guid id)
+        public async Task CreateAsync(MessageCreateViewModel model, string? currentUsername)
         {
-            throw new NotImplementedException();
+            var message = new Message
+            {
+                Id = model.Id,
+                Content = model.Content,
+                CreatedBy=currentUsername ,
+                Type= model.Type
+            };
+            await _context.Messages.AddAsync(message);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<List<MessageIndexViewModel>> GetAllMessages()
+        public async Task DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var message= await _context.Messages.FindAsync(id);
+            if (message == null)
+            {
+                return;
+            }
+
+            _context.Messages.Remove(message);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<MessageIndexViewModel>> GetAllAsync()
+        {
+            return await _context.Messages
+                .Select(m => new MessageIndexViewModel
+                {
+                    Id = m.Id,
+                    Content = m.Content,
+                    CreatedBy = m.CreatedBy,
+                    Type = m.Type,
+                    CreatedAt=m.CreatedAt
+                }).ToListAsync();
         }
     }
 }

@@ -1,38 +1,67 @@
 ﻿@model Inventra.Core.ViewModels.Couriers.CourierCreateViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Add Courier";
 }
 
-<h1>Create</h1>
+<div class="mb-4">
+    <a asp-action="Index" class="text-decoration-none text-muted mb-2 d-inline-block">
+        <i class="bi bi-arrow-left me-1"></i> Back to Couriers
+    </a>
+    <h1 class="h3 text-dark fw-bold">Add New Courier</h1>
+    <p class="text-muted">Enter the details for your new delivery partner.</p>
+</div>
 
-<h4>Courier</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+    <div class="col-lg-8 col-xl-6">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4 p-md-5">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3 rounded p-2 bg-danger bg-opacity-10" style="display: none;"></div>
+                    
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <label asp-for="Name" class="form-label fw-bold text-dark">Courier Name <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-bicycle"></i></span>
+                                <input asp-for="Name" class="form-control border-start-0 ps-0" placeholder="e.g. Speedy, Econt, DHL..." />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Phone" class="form-label fw-bold text-dark">Contact Phone <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="Phone" class="form-control border-start-0 ps-0" placeholder="e.g. +359..." />
+                            </div>
+                            <span asp-validation-for="Phone" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <hr class="my-4 text-muted" />
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-light px-4 rounded-3">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4 rounded-3 shadow-sm">
+                            <i class="bi bi-check-lg me-1"></i> Add Courier
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Phone" class="control-label"></label>
-                <input asp-for="Phone" class="form-control" />
-                <span asp-validation-for="Phone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            if ($(".validation-summary-errors").length) {
+                $(".text-danger.mb-3").show();
+            }
+        });
+    </script>
 }

@@ -1,78 +1,155 @@
 ﻿@model Inventra.Core.ViewModels.Customers.CustomerCreateViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Add Customer";
 }
 
-<h1>Create</h1>
+<!-- Page Header -->
+<div class="mb-4">
+    <a asp-action="Index" class="text-decoration-none text-muted mb-2 d-inline-block">
+        <i class="bi bi-arrow-left me-1"></i> Back to Customers
+    </a>
+    <h1 class="h3 text-dark fw-bold">Add New Customer</h1>
+    <p class="text-muted">Enter the company and contact details for your new client below.</p>
+</div>
 
-<h4>Customer</h4>
-<hr />
+<!-- Form Card -->
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="FullName" class="control-label"></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
+    <div class="col-xl-10">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4 p-md-5">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3 rounded p-2 bg-danger bg-opacity-10" style="display: none;"></div>
+                    
+                    <h5 class="text-primary mb-3"><i class="bi bi-person-vcard me-2"></i>Contact & Company Profile</h5>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="FullName" class="form-label fw-bold text-dark">Full Name <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                                <input asp-for="FullName" class="form-control border-start-0 ps-0" placeholder="e.g. Ivan Ivanov" />
+                            </div>
+                            <span asp-validation-for="FullName" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="CompanyName" class="form-label fw-bold text-dark">Company Name <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-building"></i></span>
+                                <input asp-for="CompanyName" class="form-control border-start-0 ps-0" placeholder="e.g. Alpha Industries" />
+                            </div>
+                            <span asp-validation-for="CompanyName" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-bold text-dark">Email Address <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" class="form-control border-start-0 ps-0" placeholder="client@example.com" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label fw-bold text-dark">Phone Number <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="PhoneNumber" class="form-control border-start-0 ps-0" placeholder="+359..." />
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EIK" class="form-label fw-bold text-dark">EIK / Company ID <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-briefcase"></i></span>
+                                <input asp-for="EIK" class="form-control border-start-0 ps-0" placeholder="9 to 10 characters" />
+                            </div>
+                            <span asp-validation-for="EIK" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-md-6 d-flex align-items-center">
+                            <div class="form-check form-switch mt-md-4 ms-2">
+                                <input class="form-check-input" type="checkbox" role="switch" id="zddsSwitch" asp-for="ZDDS" style="transform: scale(1.3);">
+                                <label class="form-check-label fw-bold text-dark ms-2 mt-1" for="zddsSwitch">VAT Registered (ZDDS)</label>
+                            </div>
+                            <span asp-validation-for="ZDDS" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <hr class="my-4 border-light" />
+                    <h5 class="text-primary mb-3"><i class="bi bi-geo-alt me-2"></i>Location Details</h5>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <label asp-for="Country" class="form-label fw-bold text-dark">Country <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-globe"></i></span>
+                                <input asp-for="Country" class="form-control border-start-0 ps-0" placeholder="e.g. Bulgaria" />
+                            </div>
+                            <span asp-validation-for="Country" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="County" class="form-label fw-bold text-dark">County/Province <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-map"></i></span>
+                                <input asp-for="County" class="form-control border-start-0 ps-0" placeholder="e.g. Stara Zagora" />
+                            </div>
+                            <span asp-validation-for="County" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="City" class="form-label fw-bold text-dark">City <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-buildings"></i></span>
+                                <input asp-for="City" class="form-control border-start-0 ps-0" placeholder="e.g. Kazanlak" />
+                            </div>
+                            <span asp-validation-for="City" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label asp-for="Address" class="form-label fw-bold text-dark">Street Address <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-signpost"></i></span>
+                                <input asp-for="Address" class="form-control border-start-0 ps-0" placeholder="e.g. 15 Rozova Dolina Str." />
+                            </div>
+                            <span asp-validation-for="Address" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="PostalCode" class="form-label fw-bold text-dark">Postal Code <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-mailbox"></i></span>
+                                <input asp-for="PostalCode" class="form-control border-start-0 ps-0" placeholder="e.g. 6100" />
+                            </div>
+                            <span asp-validation-for="PostalCode" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <hr class="my-4 text-muted" />
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-light px-4 rounded-3">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4 rounded-3 shadow-sm">
+                            <i class="bi bi-check-lg me-1"></i> Save Customer
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Country" class="control-label"></label>
-                <input asp-for="Country" class="form-control" />
-                <span asp-validation-for="Country" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="County" class="control-label"></label>
-                <input asp-for="County" class="form-control" />
-                <span asp-validation-for="County" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="City" class="control-label"></label>
-                <input asp-for="City" class="form-control" />
-                <span asp-validation-for="City" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Address" class="control-label"></label>
-                <input asp-for="Address" class="form-control" />
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PostalCode" class="control-label"></label>
-                <input asp-for="PostalCode" class="form-control" />
-                <span asp-validation-for="PostalCode" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EIK" class="control-label"></label>
-                <input asp-for="EIK" class="form-control" />
-                <span asp-validation-for="EIK" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ZDDS" class="control-label"></label>
-                <input asp-for="ZDDS" class="form-control" />
-                <span asp-validation-for="ZDDS" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            if ($(".validation-summary-errors").length) {
+                $(".text-danger.mb-3").show();
+            }
+        });
+    </script>
 }

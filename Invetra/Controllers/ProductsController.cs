@@ -1,11 +1,8 @@
 ﻿using Inventra.Core.Contracts;
 using Inventra.Core.ViewModels.Products;
-using Inventra.Data;
-using Inventra.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace Inventra.Controllers
 {

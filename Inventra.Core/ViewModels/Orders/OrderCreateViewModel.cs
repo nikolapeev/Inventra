@@ -9,6 +9,7 @@ namespace Inventra.Core.ViewModels.Orders
         public Guid CourierId { get; set; }
         public string? CustomerName { get; set; }
         public string? CourierName { get; set; }
+        public DateOnly ETA { get; set; }
 
         public string TrackingNumber { get; set; } = null!;
         public string? AdditionalInfo { get; set; }

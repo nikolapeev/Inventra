@@ -28,6 +28,7 @@ namespace Inventra.Core.Services
                 CourierId = model.CourierId,
                 TrackingNumber = model.TrackingNumber,
                 AdditionalInfo = model.AdditionalInfo,
+                ETA= model.ETA
             };
 
             await _context.AddAsync(order);
@@ -55,7 +56,8 @@ namespace Inventra.Core.Services
                     CustomerName = o.Customer.FullName,
                     CourierName = o.Courier.Name,
                     TrackingNumber = o.TrackingNumber,
-                    TotalPrice = o.TotalPrice
+                    TotalPrice = o.TotalPrice,
+                    ETA= o.ETA
                 }).ToListAsync();
         }
 
@@ -97,7 +99,8 @@ namespace Inventra.Core.Services
                 TrackingNumber = order.TrackingNumber,
                 AdditionalInfo = order.AdditionalInfo,
                 TotalPrice =  order.TotalPrice, // await SumOrderTotal(id),
-                Products = orderItems
+                Products = orderItems,
+                ETA = order.ETA,
             };
 
         }
@@ -114,6 +117,7 @@ namespace Inventra.Core.Services
             order.CourierId = model.CourierId;
             order.TrackingNumber = model.TrackingNumber;
             order.AdditionalInfo = model.AdditionalInfo;
+            order.ETA=model.ETA;
             //order.TotalPrice = model.TotalPrice;
 
             try

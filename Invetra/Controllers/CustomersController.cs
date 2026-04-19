@@ -83,6 +83,7 @@ namespace Inventra.Controllers
                 City = customer.City,
                 Address = customer.Address,
                 PostalCode = customer.PostalCode,
+                CompanyName=customer.CompanyName,
                 EIK = customer.EIK,
                 ZDDS = customer.ZDDS
             };

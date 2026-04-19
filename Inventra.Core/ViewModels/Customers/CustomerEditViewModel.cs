@@ -20,6 +20,9 @@ namespace Inventra.Core.ViewModels.Customers
         public string Email { get; set; } = null!;
 
         [Required]
+        public string CompanyName { get; set; } = null!;
+
+        [Required]
         public string Country { get; set; } = null!;
 
         [Required]

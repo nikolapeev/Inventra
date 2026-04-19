@@ -1,79 +1,146 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Inventra</title>
+    
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Invetra.styles.css" asp-append-version="true" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Invetra</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        @if (User.IsInRole("Administrator") || User.IsInRole("OrderManager"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">Orders</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Customers" asp-action="Index">Customers</a>
-                            </li>
-                        }
-                        @if (User.IsInRole("Administrator") || User.IsInRole("InventoryManager"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">Products</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
-                            </li>
-                        }
-                        @if (User.IsInRole("Administrator"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Suppliers" asp-action="Index">Suppliers</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">Users</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Couriers" asp-action="Index">Courier</a>
-                            </li>
-                        }
-                        <li class="nav-item">
-                            <partial name="_LoginPartial" />
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+<body class="d-flex flex-nowrap vh-100 bg-light overflow-hidden">
+
+    <!-- SIDEBAR (Based directly on your Bootstrap flex snippet) -->
+    <div class="d-flex flex-column flex-shrink-0 p-3 bg-white border-end shadow-sm z-3" style="width: 230px; overflow-y: auto;">
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+            <i class="bi bi-box-seam fs-3 me-2 text-primary"></i>
+            <span class="fs-4 fw-bold">Inventra</span>
+        </a>
+        <hr>
+        
+        <ul class="nav nav-pills flex-column mb-auto gap-1">
+            <li class="nav-item">
+                <a asp-controller="Home" asp-action="Index" class="nav-link @(currentController == "Home" ? "active" : "link-dark")">
+                    <i class="bi bi-house-door me-2"></i>
+                    Dashboard
+                </a>
+            </li>
+
+            @if (User.IsInRole("Administrator") || User.IsInRole("OrderManager") || User.IsInRole("InventoryManager"))
+            {
+                    <li>
+                        ADD Messages VIEW LATER
+                    </li>
+            }
+
+            @if (User.IsInRole("Administrator") || User.IsInRole("OrderManager"))
+            {
+                <li>
+                    <a asp-controller="Orders" asp-action="Index" class="nav-link @(currentController == "Orders" ? "active" : "link-dark")">
+                        <i class="bi bi-cart3 me-2"></i>
+                        Orders
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Customers" asp-action="Index" class="nav-link @(currentController == "Customers" ? "active" : "link-dark")">
+                        <i class="bi bi-people me-2"></i>
+                        Customers
+                    </a>
+                </li>
+            }
+
+            @if (User.IsInRole("Administrator") || User.IsInRole("InventoryManager"))
+            {
+                <li>
+                    <a asp-controller="Products" asp-action="Index" class="nav-link @(currentController == "Products" ? "active" : "link-dark")">
+                        <i class="bi bi-boxes me-2"></i>
+                        Products
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Category" asp-action="Index" class="nav-link @(currentController == "Category" ? "active" : "link-dark")">
+                        <i class="bi bi-tags me-2"></i>
+                        Categories
+                    </a>
+                </li>
+            }
+
+            @if (User.IsInRole("Administrator"))
+            {
+                <li>
+                    <a asp-controller="Suppliers" asp-action="Index" class="nav-link @(currentController == "Suppliers" ? "active" : "link-dark")">
+                        <i class="bi bi-truck me-2"></i>
+                        Suppliers
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Admin" asp-action="Index" class="nav-link @(currentController == "Admin" ? "active" : "link-dark")">
+                        <i class="bi bi-person-badge me-2"></i>
+                        Users
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Couriers" asp-action="Index" class="nav-link @(currentController == "Couriers" ? "active" : "link-dark")">
+                        <i class="bi bi-bicycle me-2"></i>
+                        Couriers
+                    </a>
+                </li>
+            }
+        </ul>
+        <hr>
+        
+        <!-- USER PROFILE DROPDOWN (Adapted for ASP.NET Identity) -->
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+                @* <!-- Fallback user icon -->
+                <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-2" style="width: 32px; height: 32px;">
+                    <i class="bi bi-person-fill"></i>
+                </div> *@
+                <strong>@(User.Identity?.Name ?? "Guest")</strong>
+            </a>
+            <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                            <button type="submit" class="dropdown-item text-danger">Sign out</button>
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Login">Sign In</a></li>
+                }
+            </ul>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Invetra - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+    <!-- MAIN CONTENT AREA -->
+    <div class="d-flex flex-column flex-grow-1 overflow-auto w-100">
+        <!-- Optional Top Header for page titles on mobile/desktop -->
+        <header class="bg-white border-bottom p-3 d-flex justify-content-between align-items-center sticky-top shadow-sm">
+            <h4 class="mb-0 fw-bold text-dark">@ViewData["Title"]</h4>
+        </header>
+
+        <!-- Actual Page Content -->
+        <main class="p-4 flex-grow-1">
+            @RenderBody()
+        </main>
+
+        <footer class="mt-auto border-top text-muted bg-white p-3 text-center">
+            <small>&copy; 2026 - Inventra - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></small>
+        </footer>
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

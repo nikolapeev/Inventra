@@ -35,6 +35,10 @@ namespace Inventra.Core.ViewModels.Customers
         public string EIK { get; set; } = string.Empty;
 
         [Required]
-        public string ZDDS { get; set; } = string.Empty;
+        public bool ZDDS { get; set; }
+
+        [Required]
+        public string CompanyName { get; set; } = null!;
+
     }
 }

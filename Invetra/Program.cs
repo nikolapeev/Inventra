@@ -39,6 +39,7 @@ public class Program
         builder.Services.AddScoped<ISupplierService, SupplierService>();
         builder.Services.AddScoped<IOrderService, OrderService>();
         builder.Services.AddScoped<IOrderDetailsService, OrderDetailsService>();
+        builder.Services.AddScoped<IMessageService, MessageService>();
 
         var app = builder.Build();
 
@@ -62,14 +63,14 @@ public class Program
 
         app.MapRazorPages();
 
-        using(var scope = app.Services.CreateScope())
+        using (var scope = app.Services.CreateScope())
         {
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             string[] roleNames = { "Administrator", "InventoryManager", "OrderManager" };
 
-            foreach(var roleName in roleNames)
+            foreach (var roleName in roleNames)
             {
-                if(!await roleManager.RoleExistsAsync(roleName))
+                if (!await roleManager.RoleExistsAsync(roleName))
                 {
                     await roleManager.CreateAsync(new IdentityRole(roleName));
                 }
@@ -78,7 +79,7 @@ public class Program
 
         using (var scope = app.Services.CreateScope())
         {
-            var dbContext= scope.ServiceProvider.GetRequiredService<InventraDbContext>();
+            var dbContext = scope.ServiceProvider.GetRequiredService<InventraDbContext>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<InventraUser>>();
 
@@ -88,13 +89,13 @@ public class Program
             {
                 if (!await roleManager.RoleExistsAsync(role))
                 {
-                    await roleManager.CreateAsync(new IdentityRole(role)); 
+                    await roleManager.CreateAsync(new IdentityRole(role));
                 }
             }
 
             // 2. Създаваме администраторския профил
             var adminEmail = "admin@inventra.com";
-             var adminUser = await userManager.FindByEmailAsync(adminEmail); 
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
             if (adminUser == null)
             {
@@ -106,12 +107,12 @@ public class Program
                 };
 
                 // Създаваме потребителя с парола по твой избор
-                 var result = await userManager.CreateAsync(newAdmin, "Admin123!"); 
+                var result = await userManager.CreateAsync(newAdmin, "Admin123!");
 
                 if (result.Succeeded)
                 {
                     // Присвояваме му ролята Administrator
-                     await userManager.AddToRoleAsync(newAdmin, "Administrator"); 
+                    await userManager.AddToRoleAsync(newAdmin, "Administrator");
                 }
             }
 

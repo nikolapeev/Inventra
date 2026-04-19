@@ -15,10 +15,10 @@ namespace Inventra.Data.Entities
         public Guid Id {  get; set; }
 
         [Required]
-        public string CreatedBy {  get; set; }
+        public string CreatedBy {  get; set; } 
 
         [Required]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }= DateTime.Now;
 
         [Required]
         [MinLength(10,ErrorMessage ="Message must be between 10 and 50 characters long")]

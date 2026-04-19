@@ -9,9 +9,9 @@ namespace Inventra.Core.Contracts
 {
     public interface IMessageService
     {
-        Task<List<MessageIndexViewModel>> GetAllMessages();
+        Task<List<MessageIndexViewModel>> GetAllAsync();
 
-        Task<MessageCreateViewModel> CreateAsync(MessageCreateViewModel model);
+        Task CreateAsync(MessageCreateViewModel model, string? currentUsername);
 
         Task DeleteAsync(Guid id);
     }

@@ -35,6 +35,7 @@ namespace Inventra.Core.Services
                 Address = model.Address,
                 PostalCode = model.PostalCode,
                 EIK = model.EIK,
+                CompanyName = model.CompanyName,
                 ZDDS = model.ZDDS
 
             };
@@ -68,6 +69,7 @@ namespace Inventra.Core.Services
                     City = c.City,
                     Address = c.Address,
                     PostalCode = c.PostalCode,
+                    CompanyName= c.CompanyName,
                     EIK = c.EIK,
                     ZDDS = c.ZDDS
 
@@ -89,6 +91,7 @@ namespace Inventra.Core.Services
                     City = c.City,
                     Address = c.Address,
                     PostalCode = c.PostalCode,
+                    CompanyName = c.CompanyName,
                     EIK = c.EIK,
                     ZDDS = c.ZDDS
                 }).FirstOrDefaultAsync();
@@ -112,6 +115,7 @@ namespace Inventra.Core.Services
             customer.Address = model.Address;
             customer.PostalCode = model.PostalCode;
             customer.EIK = model.EIK;
+            customer.CompanyName = model.CompanyName;
             customer.ZDDS = model.ZDDS;
 
             await context.SaveChangesAsync();
