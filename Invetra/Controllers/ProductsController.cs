@@ -16,7 +16,7 @@ namespace Inventra.Controllers
             _productService = productService;
         }
 
-        // GET: Products
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             
@@ -25,7 +25,7 @@ namespace Inventra.Controllers
             return View(products);
         }
 
-        // GET: Products/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
             var product = await _productService.GetDetailsByIdAsync(id);
@@ -38,7 +38,7 @@ namespace Inventra.Controllers
             return View(product);
         }
 
-        // GET: Products/Create
+        [HttpGet]
         public async Task<IActionResult> CreateAsync()
         {
             ViewBag.SupplierId = new SelectList(await _productService.ListSupplier(), "SupplierId", "Name");
@@ -47,9 +47,6 @@ namespace Inventra.Controllers
             return View(new ProductCreateViewModel());
         }
 
-        // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductCreateViewModel model)
@@ -62,30 +59,12 @@ namespace Inventra.Controllers
                 return View(model);
             }
 
-            //var product = new Product
-            //{
-            //    Id = Guid.NewGuid(),
-            //    Name = model.Name,
-            //    CategoryId = model.CategoryId,
-            //    SupplierId = model.SupplierId, 
-            //    Description = model.Description,
-            //    Price = model.Price,
-            //    StockQuantity = model.StockQuantity,
-            //    ImageURL = model.ImageURL,
-            //    BatchNumber = model.BatchNumber,
-            //    WarehouseLocationId = model.WarehouseLocationId,
-            //    AddedBy = User.Identity?.Name ?? "System" // Added this as your Entity marks it [Required]
-            //};
-
-            //await _context.Products.AddAsync(product);
-            //await _context.SaveChangesAsync();
-
             await _productService.CreateAsync(model , User.Identity?.Name);
 
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Products/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
             ViewBag.SupplierId = new SelectList(await _productService.ListSupplier(), "SupplierId", "Name");
@@ -114,9 +93,6 @@ namespace Inventra.Controllers
             return View(model);
         }
 
-        // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ProductEditViewModel model )

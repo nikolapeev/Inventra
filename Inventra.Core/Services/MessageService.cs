@@ -21,13 +21,13 @@ namespace Inventra.Core.Services
             _context = context;
         }
 
-        public async Task CreateAsync(MessageCreateViewModel model, string? currentUsername)
+        public async Task CreateAsync(MessageCreateViewModel model)
         {
             var message = new Message
             {
                 Id = model.Id,
                 Content = model.Content,
-                CreatedBy=currentUsername ,
+                CreatedBy=model.CreatedBy,
                 Type= model.Type
             };
             await _context.Messages.AddAsync(message);

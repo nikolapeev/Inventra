@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventra.Controllers
 {
-    [Authorize(Roles ="Administrator")]
+    [Authorize(Roles ="Administrator,OrderManager")]
     public class CustomersController : Controller
     {
         private readonly ICustomerService _customerService;
@@ -18,7 +18,7 @@ namespace Inventra.Controllers
             _customerService = customerService;
         }
 
-        // GET: Customers
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var customers = await _customerService.GetAllAsync();
@@ -26,7 +26,7 @@ namespace Inventra.Controllers
             return View(customers);
         }
 
-        // GET: Customers/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
             var customer = await _customerService.GetByIdAsync(id);
@@ -39,15 +39,13 @@ namespace Inventra.Controllers
             return View(customer);
         }
 
-        // GET: Customers/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View(new CustomerCreateViewModel());
         }
 
-        // POST: Customers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CustomerCreateViewModel model)
@@ -62,7 +60,7 @@ namespace Inventra.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Customers/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
             var customer = await _customerService.GetByIdAsync(id);
@@ -91,9 +89,6 @@ namespace Inventra.Controllers
             return View(model);
         }
 
-        // POST: Customers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CustomerIndexViewModel model)

@@ -23,7 +23,7 @@ namespace Inventra.Controllers
             _supplierService = supplierService;
         }
 
-        // GET: Suppliers
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var suppliers = await _supplierService.GetAllSuppliers();
@@ -36,9 +36,6 @@ namespace Inventra.Controllers
             return View(new SupplierCreateViewModel());
         }
 
-        // POST: Suppliers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SupplierCreateViewModel model)
@@ -53,7 +50,7 @@ namespace Inventra.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Suppliers/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
             var supplier = await _supplierService.GetByIdAsync(id);
@@ -75,9 +72,6 @@ namespace Inventra.Controllers
             return View(model);
         }
 
-        // POST: Suppliers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(SupplierEditViewModel model )

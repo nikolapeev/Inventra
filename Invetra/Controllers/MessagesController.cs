@@ -1,17 +1,22 @@
 ﻿using Inventra.Core.Contracts;
 using Inventra.Core.ViewModels.Messages;
+using Inventra.Data.Entities;
 using Inventra.Data.Enums;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security.Claims;
 using System.Security.Principal;
 
 namespace Inventra.Controllers
 {
-    public class MessageController : Controller
+    [Authorize]
+    public class MessagesController : Controller
     {
         private readonly IMessageService _messageService;
 
-        public MessageController(IMessageService messageService)
+        public MessagesController(IMessageService messageService)
         {
             _messageService = messageService;
         }
@@ -24,9 +29,8 @@ namespace Inventra.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            // Convert enum to a list of SelectListItems
             ViewBag.MessageTypes = Enum.GetValues<MessageType>()
                 .Select(e => new SelectListItem
                 {
@@ -34,9 +38,14 @@ namespace Inventra.Controllers
                     Text = e.ToString()
                 }).ToList();
 
-            
+            var userEmail = User.FindFirstValue(ClaimTypes.Name);
 
-            return View(new MessageCreateViewModel());
+            MessageCreateViewModel model = new MessageCreateViewModel
+            {
+                CreatedBy = userEmail ?? "System"
+            };
+
+            return View(model);
         }
 
         [HttpPost]
@@ -44,12 +53,12 @@ namespace Inventra.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                string currentUsername = User.Identity.Name;
+                model.CreatedBy = currentUsername;
             }
 
-            string currentUsername = User.Identity?.Name;
 
-            await _messageService.CreateAsync(model, currentUsername);
+            await _messageService.CreateAsync(model);
 
             return RedirectToAction(nameof(Index));
         }
@@ -57,15 +66,6 @@ namespace Inventra.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
-            //var cat= await _context.Categories.FindAsync(id);
-
-            //if (cat == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //_context.Categories.Remove(cat);
-            //await _context.SaveChangesAsync();
             await _messageService.DeleteAsync(id);
             return RedirectToAction("Index");
         }

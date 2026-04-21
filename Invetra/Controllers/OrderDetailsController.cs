@@ -28,18 +28,15 @@ namespace Inventra.Controllers
                 return NotFound();
             }
 
-            // 2. We MUST create an instance of your exact ViewModel to prevent the NullReferenceException
+           
             var viewModel = new OrderDetailsCreateViewModel
             {
-                OrderId = orderId, // We lock the ID from the URL into the ViewModel here
-                QTY = 1            // Set a safe default quantity
+                OrderId = orderId, 
+                QTY = 1            
             };
 
-            // 3. Populate the dropdown list so the webpage doesn't crash trying to load products
             ViewBag.ProductId = new SelectList(await _odService.GetAllProducts(), "Id", "Name");
 
-            // 4. Pass the populated ViewModel directly into the HTML page
-            //return View(viewModel);
             return PartialView("_AddProductPartial", viewModel);
         }
 

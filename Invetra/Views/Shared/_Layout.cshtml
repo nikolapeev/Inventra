@@ -34,7 +34,7 @@
             @if (User.IsInRole("Administrator") || User.IsInRole("OrderManager") || User.IsInRole("InventoryManager"))
             {
                 <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Message" asp-action="Index">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Messages" asp-action="Index">
                         <i class="bi bi-chat-left-text"></i>
                         Message Board
                         </a>

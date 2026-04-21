@@ -11,7 +11,7 @@ namespace Inventra.Core.Contracts
     {
         Task<List<MessageIndexViewModel>> GetAllAsync();
 
-        Task CreateAsync(MessageCreateViewModel model, string? currentUsername);
+        Task CreateAsync(MessageCreateViewModel model);
 
         Task DeleteAsync(Guid id);
     }

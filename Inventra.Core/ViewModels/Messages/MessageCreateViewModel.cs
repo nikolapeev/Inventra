@@ -14,7 +14,7 @@ namespace Inventra.Core.ViewModels.Messages
         public Guid Id { get; set; }
 
         [Required]
-        public string CreatedBy { get; set; }
+        public string CreatedBy { get; set; } = null!;
 
         [Required]
         public DateTime CreatedAt { get; set; }
