@@ -66,65 +66,77 @@ public class Program
 
         using (var scope = app.Services.CreateScope())
         {
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            string[] roleNames = { "Administrator", "InventoryManager", "OrderManager" };
-
-            foreach (var roleName in roleNames)
-            {
-                if (!await roleManager.RoleExistsAsync(roleName))
-                {
-                    await roleManager.CreateAsync(new IdentityRole(roleName));
-                }
-            }
-        }
-
-        using (var scope = app.Services.CreateScope())
-        {
-            var dbContext = scope.ServiceProvider.GetRequiredService<InventraDbContext>();
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<InventraUser>>();
-
-            // 1. Първо създаваме ролите (както досега)
-            string[] roles = { "Administrator", "OrderManager", "InventoryManager" };
-            foreach (var role in roles)
-            {
-                if (!await roleManager.RoleExistsAsync(role))
-                {
-                    await roleManager.CreateAsync(new IdentityRole(role));
-                }
-            }
-
-            // 2. Създаваме администраторския профил
-            var adminEmail = "admin@inventra.com";
-            var adminUser = await userManager.FindByEmailAsync(adminEmail);
-
-            if (adminUser == null)
-            {
-                var newAdmin = new InventraUser
-                {
-                    UserName = adminEmail,
-                    Email = adminEmail,
-                    EmailConfirmed = true // Маркираме го като потвърден
-                };
-
-                // Създаваме потребителя с парола по твой избор
-                var result = await userManager.CreateAsync(newAdmin, "Admin123!");
-
-                if (result.Succeeded)
-                {
-                    // Присвояваме му ролята Administrator
-                    await userManager.AddToRoleAsync(newAdmin, "Administrator");
-                }
-            }
+            var services = scope.ServiceProvider;
 
             try
             {
+                var dbContext = services.GetRequiredService<InventraDbContext>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = services.GetRequiredService<UserManager<InventraUser>>();
+
+                string[] roles = { "Administrator", "OrderManager", "InventoryManager" };
+                foreach (var role in roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
+                    {
+                        await roleManager.CreateAsync(new IdentityRole(role));
+                    }
+                }
+
+                var adminEmail = "admin@inventra.com";
+                if (await userManager.FindByEmailAsync(adminEmail) == null)
+                {
+                    var newAdmin = new InventraUser
+                    {
+                        UserName = adminEmail,
+                        Email = adminEmail,
+                        EmailConfirmed = true
+                    };
+                    var result = await userManager.CreateAsync(newAdmin, "Admin123!");
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(newAdmin, "Administrator");
+                    }
+                }
+
+                var orderManagerEmail = "orders@inventra.com";
+                if (await userManager.FindByEmailAsync(orderManagerEmail) == null)
+                {
+                    var newOrderManager = new InventraUser
+                    {
+                        UserName = orderManagerEmail,
+                        Email = orderManagerEmail,
+                        EmailConfirmed = true
+                    };
+                    var result = await userManager.CreateAsync(newOrderManager, "Orders123!");
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(newOrderManager, "OrderManager");
+                    }
+                }
+
+                var inventoryManagerEmail = "inventory@inventra.com";
+                if (await userManager.FindByEmailAsync(inventoryManagerEmail) == null)
+                {
+                    var newInventoryManager = new InventraUser
+                    {
+                        UserName = inventoryManagerEmail,
+                        Email = inventoryManagerEmail,
+                        EmailConfirmed = true
+                    };
+                    var result = await userManager.CreateAsync(newInventoryManager, "Inventory123!");
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(newInventoryManager, "InventoryManager");
+                    }
+                }
+
                 InventraDbSeeder.Seed(dbContext);
             }
             catch (Exception ex)
             {
-                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                logger.LogError(ex, "An error occurred seeding the DB.");
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred seeding the DB and Identity data.");
             }
         }
 

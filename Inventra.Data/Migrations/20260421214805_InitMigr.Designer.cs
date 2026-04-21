@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Inventra.Data.Migrations
 {
     [DbContext(typeof(InventraDbContext))]
-    [Migration("20260419193202_InitMigr")]
+    [Migration("20260421214805_InitMigr")]
     partial class InitMigr
     {
         /// <inheritdoc />

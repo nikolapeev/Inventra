@@ -12,6 +12,13 @@ namespace Inventra.Core.ViewModels.Home
         public List<Inventra.Core.ViewModels.Messages.MessageIndexViewModel> InfoMessages { get; set; } = new();
         public List<TopCustomerViewModel> TopCustomers { get; set; } = new();
         public List<ProductStatViewModel> MostPurchased { get; set; } = new();
+        public int LowStockProductsCount { get; set; }
+
+        public int TotalOrders { get; set; }
+        public int ProcessedOrdersCount { get; set; }
+        public int InProgressOrdersCount { get; set; }
+        public int ShippedOrdersCount { get; set; }
+
         public decimal TotalRevenue { get; set; }
     }
 }

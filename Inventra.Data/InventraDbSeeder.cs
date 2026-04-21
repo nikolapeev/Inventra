@@ -1,4 +1,5 @@
 ﻿using Inventra.Data.Entities;
+using Inventra.Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,16 +13,13 @@ namespace Inventra.Data
     {
         public static void Seed(InventraDbContext context)
         {
-            // Прилагане на миграциите преди сийдване
             context.Database.Migrate();
 
-            // Проверка дали вече има данни (за да не се дублират при всяко стартиране)
             if (context.Categories.Any() || context.Products.Any() || context.Customers.Any())
             {
                 return;
             }
 
-            // 1. Categories (5 броя)
             var categories = new[]
             {
                 new Category { CategoryId = Guid.NewGuid(), Name = "Електроника" },
@@ -32,7 +30,6 @@ namespace Inventra.Data
             };
             context.Categories.AddRange(categories);
 
-            // 2. Suppliers (5 броя)
             var suppliers = new[]
             {
                 new Supplier { SupplierId = Guid.NewGuid(), Name = "ТехноПлюс ООД", EIK = "123456789", PhoneNumber = "+359888111222", Email = "sales@technoplus.bg" },
@@ -43,7 +40,6 @@ namespace Inventra.Data
             };
             context.Suppliers.AddRange(suppliers);
 
-            // 3. Couriers (5 броя)
             var couriers = new[]
             {
                 new Courier { CourierId = Guid.NewGuid(), Name = "Еконт Експрес", Phone = "070017300" },
@@ -54,7 +50,6 @@ namespace Inventra.Data
             };
             context.Couriers.AddRange(couriers);
 
-            // 4. Customers (5 броя)
             var customers = new[]
             {
                 new Customer { CustomerId = Guid.NewGuid(), FullName = "Иван Иванов", PhoneNumber = "0888123456", CompanyName="ЕлектроХолд АД",Email = "ivan.ivanov@abv.bg", Country = "България", County = "Стара Загора", City = "Казанлък", Address = "бул. Розова долина 15", PostalCode = "6100", EIK = "123123123", ZDDS = false },
@@ -65,7 +60,6 @@ namespace Inventra.Data
             };
             context.Customers.AddRange(customers);
 
-            // 5. Products (5 броя)
             var products = new[]
             {
                 new Product { Id = Guid.NewGuid(), Name = "Лаптоп Lenovo ThinkPad T14", CategoryId = categories[0].CategoryId, Description = "Бизнес лаптоп с Intel Core i7", Price = 2499.00m, StockQuantity = 15, ImageURL = "/images/thinkpad.jpg", SupplierId = suppliers[0].SupplierId, BatchNumber = "B-2026-01", AddedBy = "admin@inventra.com", WarehouseLocationId = "A1-S1" },
@@ -76,41 +70,40 @@ namespace Inventra.Data
             };
             context.Products.AddRange(products);
 
-            // 6. Orders (5 броя)
             var orders = new[]
             {
-                new Order { Id = Guid.NewGuid(), CustomerId = customers[0].CustomerId, CourierId = couriers[0].CourierId, TrackingNumber = "EC100000001BG", TotalPrice = 2499.00m, AdditionalInfo = "Доставка след 14:00 часа" },
-                new Order { Id = Guid.NewGuid(), CustomerId = customers[1].CustomerId, CourierId = couriers[1].CourierId, TrackingNumber = "SP200000002BG", TotalPrice = 199.50m, AdditionalInfo = "Обаждане преди доставка" },
-                new Order { Id = Guid.NewGuid(), CustomerId = customers[2].CustomerId, CourierId = couriers[2].CourierId, TrackingNumber = "DH300000003BG", TotalPrice = 490.00m, AdditionalInfo = "Оставете на рецепция" },
-                new Order { Id = Guid.NewGuid(), CustomerId = customers[3].CustomerId, CourierId = couriers[0].CourierId, TrackingNumber = "EC100000004BG", TotalPrice = 2849.00m, AdditionalInfo = "Чупливо" },
-                new Order { Id = Guid.NewGuid(), CustomerId = customers[4].CustomerId, CourierId = couriers[1].CourierId, TrackingNumber = "SP200000005BG", TotalPrice = 499.99m, AdditionalInfo = "Изпращане на лиценза по имейл" }
+                new Order { Id = Guid.NewGuid(), CustomerId = customers[0].CustomerId, CourierId = couriers[0].CourierId, TrackingNumber = "EC100000001BG", TotalPrice = 2499.00m, AdditionalInfo = "Доставка след 14:00 часа", ETA = DateOnly.FromDateTime(DateTime.Now.AddDays(2)), Status = Statuses.Processed },
+                new Order { Id = Guid.NewGuid(), CustomerId = customers[1].CustomerId, CourierId = couriers[1].CourierId, TrackingNumber = "SP200000002BG", TotalPrice = 199.50m, AdditionalInfo = "Обаждане преди доставка", ETA = DateOnly.FromDateTime(DateTime.Now.AddDays(1)), Status = Statuses.Shipped },
+                new Order { Id = Guid.NewGuid(), CustomerId = customers[2].CustomerId, CourierId = couriers[2].CourierId, TrackingNumber = "DH300000003BG", TotalPrice = 490.00m, AdditionalInfo = "Оставете на рецепция", ETA = DateOnly.FromDateTime(DateTime.Now.AddDays(3)), Status = Statuses.InProgress },
+                new Order { Id = Guid.NewGuid(), CustomerId = customers[3].CustomerId, CourierId = couriers[0].CourierId, TrackingNumber = "EC100000004BG", TotalPrice = 2849.00m, AdditionalInfo = "Чупливо", ETA = DateOnly.FromDateTime(DateTime.Now.AddDays(2)), Status = Statuses.Processed },
+                new Order { Id = Guid.NewGuid(), CustomerId = customers[4].CustomerId, CourierId = couriers[1].CourierId, TrackingNumber = "SP200000005BG", TotalPrice = 499.99m, AdditionalInfo = "Изпращане на лиценза по имейл", ETA = DateOnly.FromDateTime(DateTime.Now), Status = Statuses.Shipped }
             };
             context.Orders.AddRange(orders);
 
-            // 7. Order Details (Най-малко 5 броя, свързани с поръчките)
             var orderDetails = new[]
             {
-                // Поръчка 1: 1 Лаптоп
                 new OrderDetails { OrderId = orders[0].Id, ProductId = products[0].Id, QTY = 1, Subtotal = 2499.00m },
                 
-                // Поръчка 2: 1 Мишка
                 new OrderDetails { OrderId = orders[1].Id, ProductId = products[1].Id, QTY = 1, Subtotal = 199.50m },
                 
-                // Поръчка 3: 2 Рутера (2 * 245 = 490)
                 new OrderDetails { OrderId = orders[2].Id, ProductId = products[2].Id, QTY = 2, Subtotal = 490.00m },
                 
-                // Поръчка 4: 1 Лаптоп и 1 Офис стол (2499 + 350 = 2849)
                 new OrderDetails { OrderId = orders[3].Id, ProductId = products[0].Id, QTY = 1, Subtotal = 2499.00m },
                 new OrderDetails { OrderId = orders[3].Id, ProductId = products[3].Id, QTY = 1, Subtotal = 350.00m },
                 
-                // Поръчка 5: 1 Софтуерен лиценз
                 new OrderDetails { OrderId = orders[4].Id, ProductId = products[4].Id, QTY = 1, Subtotal = 499.99m }
             };
             context.OrderDetails.AddRange(orderDetails);
 
-            // Запазване на всички промени в базата
+            var messages = new[]
+            {
+                new Message { Id = Guid.NewGuid(), CreatedBy = "admin@inventra.com", CreatedAt = DateTime.Now, Content = "Системата е инициализирана успешно.", Type = MessageType.Info },
+                new Message { Id = Guid.NewGuid(), CreatedBy = "system@inventra.com", CreatedAt = DateTime.Now.AddHours(-2), Content = "Проверете наличностите на лаптопите!", Type = MessageType.Crucial },
+                new Message { Id = Guid.NewGuid(), CreatedBy = "manager@inventra.com", CreatedAt = DateTime.Now.AddDays(-1), Content = "Нови доставки се очакват в петък.", Type = MessageType.Misx }
+            };
+            context.Messages.AddRange(messages);
+
             context.SaveChanges();
         }
     }
 }
-

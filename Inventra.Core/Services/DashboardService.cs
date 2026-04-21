@@ -71,9 +71,21 @@ namespace Inventra.Core.Services
                 })
                 .ToListAsync();
 
+            var lowStockProductsCount = await _context.Products
+                .Where(p => p.StockQuantity < 5)
+                .CountAsync();
 
+            var totalOrders = await _context.Orders.CountAsync();
 
-            
+            var processedCount = await _context.Orders
+                .CountAsync(o => o.Status == Inventra.Data.Enums.Statuses.Processed);
+
+            var inProgressCount = await _context.Orders
+                .CountAsync(o => o.Status == Inventra.Data.Enums.Statuses.InProgress);
+
+            var shippedCount = await _context.Orders
+                .CountAsync(o => o.Status == Inventra.Data.Enums.Statuses.Shipped);
+
 
             return new HomeStatsViewModel
             {
@@ -81,7 +93,12 @@ namespace Inventra.Core.Services
                 MostPurchased = mostPurchased,
                 TotalRevenue = totalRevenue,
                 CrucialMessages = crucialMessages,
-                InfoMessages = infoMessages
+                InfoMessages = infoMessages,
+                LowStockProductsCount= lowStockProductsCount,
+                TotalOrders = totalOrders,
+                ProcessedOrdersCount = processedCount,
+                InProgressOrdersCount = inProgressCount,
+                ShippedOrdersCount = shippedCount
             };
         }
     }
