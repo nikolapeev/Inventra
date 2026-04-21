@@ -1,59 +1,100 @@
 ﻿@model Inventra.Core.ViewModels.Orders.OrderCreateViewModel
+@using Inventra.Data.Enums
 
 @{
     ViewData["Title"] = "Create Order";
 }
 
-<h1>Create Order</h1>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-<h4>New Order</h4>
-<hr />
+<div class="mb-4">
+    <a asp-action="Index" class="text-decoration-none text-muted mb-2 d-inline-block">
+        <i class="bi bi-arrow-left me-1"></i> Back to Orders
+    </a>
+    <h1 class="h3 text-dark fw-bold">Create New Order</h1>
+    <p class="text-muted">Set up a new order and assign shipping details.</p>
+</div>
+
 <div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="col-xl-10">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4 p-md-5">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3 rounded p-2 bg-danger bg-opacity-10" style="display: none;"></div>
+                    
+                    <h5 class="text-primary mb-3"><i class="bi bi-card-checklist me-2"></i>Order Information</h5>
+                    <div class="row g-4 mb-4">
+                        
+                        <div class="col-md-6">
+                            <label asp-for="CustomerId" class="form-label fw-bold text-dark">Customer <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                                <select asp-for="CustomerId" class="form-select border-start-0 ps-0" asp-items="ViewBag.CustomerId">
+                                    <option value="">-- Select Customer --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="CustomerId" class="text-danger small mt-1 d-block"></span>
+                        </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="CustomerId" class="control-label">Customer</label>
-                <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId">
-                    <option value="">-- Select Customer --</option>
-                </select>
-                <span asp-validation-for="CustomerId" class="text-danger"></span>
+                        <div class="col-md-6">
+                            <label asp-for="CourierId" class="form-label fw-bold text-dark">Courier <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-bicycle"></i></span>
+                                <select asp-for="CourierId" class="form-select border-start-0 ps-0" asp-items="ViewBag.CourierId">
+                                    <option value="">-- Select Courier --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="CourierId" class="text-danger small mt-1 d-block"></span>
+                        </div>
 
+                        <div class="col-md-6">
+                            <label asp-for="TrackingNumber" class="form-label fw-bold text-dark">Tracking Number <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-upc-scan"></i></span>
+                                <input asp-for="TrackingNumber" class="form-control border-start-0 ps-0" placeholder="e.g. TRK-987654321" />
+                            </div>
+                            <span asp-validation-for="TrackingNumber" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Status" class="form-label fw-bold text-dark">Order Status <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-flag"></i></span>
+                                <select asp-for="Status" class="form-select border-start-0 ps-0" asp-items="Html.GetEnumSelectList<Statuses>()">
+                                    <option value="">-- Select Status --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Status" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="ETA" class="form-label fw-bold text-dark">Estimated Time of Arrival (ETA) <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-calendar-event"></i></span>
+                                <input asp-for="ETA" type="date" class="form-control border-start-0 ps-0" />
+                            </div>
+                            <span asp-validation-for="ETA" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="AdditionalInfo" class="form-label fw-bold text-dark">Additional Information <span class="text-danger">*</span></label>
+                            <textarea asp-for="AdditionalInfo" class="form-control shadow-sm rounded-3" rows="4" placeholder="Delivery instructions, notes, etc. (Minimum 10 characters)..."></textarea>
+                            <span asp-validation-for="AdditionalInfo" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <hr class="my-4 border-light" />
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-light px-4 rounded-3">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4 rounded-3 shadow-sm">
+                            <i class="bi bi-check-lg me-1"></i> Create Order
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="CourierId" class="control-label">Assign Courier</label>
-                <select asp-for="CourierId" class="form-control" asp-items="ViewBag.CourierId">
-                    <option value="">-- Select Courier --</option>
-                </select>
-                <span asp-validation-for="CourierId" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="TrackingNumber" class="control-label"></label>
-                <input asp-for="TrackingNumber" class="form-control" placeholder="Enter tracking number" />
-                <span asp-validation-for="TrackingNumber" class="text-danger"></span>
-            </div>
-
-            @* <div class="form-group mb-3">
-                <label asp-for="TotalPrice" class="control-label"></label>
-                <input asp-for="TotalPrice" class="form-control" type="number" step="0.01" />
-                <span asp-validation-for="TotalPrice" class="text-danger"></span>
-            </div> *@
-
-            @* Matches the AdditionalInfo field in your Controller mapping *@
-            <div class="form-group mb-3">
-                <label asp-for="AdditionalInfo" class="control-label"></label>
-                <textarea asp-for="AdditionalInfo" class="form-control" rows="3" placeholder="Notes about the delivery..."></textarea>
-                <span asp-validation-for="AdditionalInfo" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mt-4">
-                <input type="submit" value="Create Order" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary ms-2">Back to List</a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
@@ -61,4 +102,12 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+        if ($(".validation-summary-errors").length) {
+        $(".text-danger.mb-3").show();
+        }
+        });
+    </script>
 }

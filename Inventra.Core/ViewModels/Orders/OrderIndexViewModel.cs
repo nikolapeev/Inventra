@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Inventra.Data.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Inventra.Core.ViewModels.Orders
 {
@@ -13,6 +14,8 @@ namespace Inventra.Core.ViewModels.Orders
         public Guid CustomerId { get; set; }
         public Guid CourierId { get; set; }
 
+
+        public Statuses Status {  get; set; }
         public string TrackingNumber { get; set; } = null!;
         public decimal TotalPrice { get; set; }
         public string? AdditionalInfo { get; set; }

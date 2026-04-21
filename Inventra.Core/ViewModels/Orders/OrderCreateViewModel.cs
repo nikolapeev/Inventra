@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Inventra.Data.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Inventra.Core.ViewModels.Orders
 {
@@ -11,6 +12,7 @@ namespace Inventra.Core.ViewModels.Orders
         public string? CourierName { get; set; }
         public DateOnly ETA { get; set; }
 
+        public Statuses Status {  get; set; }
         public string TrackingNumber { get; set; } = null!;
         public string? AdditionalInfo { get; set; }
 

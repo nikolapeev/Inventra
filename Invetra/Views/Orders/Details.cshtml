@@ -1,287 +1,166 @@
-﻿@*@model Inventra.Core.ViewModels.Orders.OrderDetailsViewModel
+﻿@model Inventra.Core.ViewModels.Orders.OrderDetailsViewModel
 
 @{
     ViewData["Title"] = "Order Details";
 }
 
-<h1>Order Details</h1>
-
-<div>
-    <h4>Order Summary</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">Customer</dt>
-        <dd class="col-sm-10">@Model.CustomerName</dd>
-
-        <dt class="col-sm-2">Courier</dt>
-        <dd class="col-sm-10">@Model.CourierName</dd>
-
-        <dt class="col-sm-2">Tracking Number</dt>
-        <dd class="col-sm-10">@Model.TrackingNumber</dd>
-
-        <dt class="col-sm-2">Additional Information</dt>
-        <dd class="col-sm-10">@Model.AdditionalInfo</dd>
-
-        <dt class="col-sm-2">Order Total</dt>
-        <dd class="col-sm-10 fw-bold text-success">@Model.TotalPrice.ToString("N2") €</dd>
-    </dl>
+<div class="d-flex justify-content-between align-items-end mb-4">
+    <div>
+        <a asp-action="Index" class="text-decoration-none text-muted mb-2 d-inline-block">
+            <i class="bi bi-arrow-left me-1"></i> Back to Orders
+        </a>
+        <h1 class="h3 text-dark fw-bold">Order Details</h1>
+    </div>
 </div>
 
-<hr class="mt-4 mb-4" />
+<div class="row g-4 mb-4">
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4>Products in this Order</h4>
+    <div class="col-xl-4 col-lg-5">
+        <div class="card border-0 shadow-sm rounded-4 h-100 border-start border-success border-4">
+            <div class="card-body p-4 d-flex flex-column justify-content-center">
+                <div class="text-xs fw-bold text-success text-uppercase mb-1">Order Total</div>
+                <div class="h2 mb-0 fw-bold text-dark">@Model.TotalPrice.ToString("N2") €</div>
+                <div class="mt-3">
+                    <span class="badge bg-light text-dark border"><i class="bi bi-upc-scan me-1"></i> @Model.TrackingNumber</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <a asp-controller="OrderDetails"
-           asp-action="Create"
-           asp-route-orderId="@Model.Id"
-           class="btn btn-primary">
-        + Add Product
-    </a>
+    <div class="col-xl-8 col-lg-7">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <dl class="row mb-0 g-3">
+                    <dt class="col-sm-4 text-muted fw-normal"><i class="bi bi-person me-2 text-primary"></i>Customer</dt>
+                    <dd class="col-sm-8 fw-bold text-dark">@Model.CustomerName</dd>
+                    
+                    <div class="col-12"><hr class="my-1 border-light"></div>
+
+                    <dt class="col-sm-4 text-muted fw-normal"><i class="bi bi-bicycle me-2 text-primary"></i>Courier</dt>
+                    <dd class="col-sm-8 fw-bold text-dark">@Model.CourierName</dd>
+                    
+                    <div class="col-12"><hr class="my-1 border-light"></div>
+
+                    <dt class="col-sm-4 text-muted fw-normal"><i class="bi bi-info-circle me-2 text-primary"></i>Additional Info</dt>
+                    <dd class="col-sm-8 text-dark mb-0">@Model.AdditionalInfo</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
 </div>
 
-<table class="table table-bordered table-striped mt-3">
-    <thead class="table-dark">
-        <tr>
-            <th>Product Name</th>
-            <th class="text-end">Quantity (QTY)</th>
-            <th class="text-end">Unit Price</th>
-            <th class="text-end">Subtotal</th>
-            <th class="text-end">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.Products != null && Model.Products.Count > 0)
-        {
-            @foreach (Inventra.Data.Entities.OrderDetails item in Model.Products)
-            {
-                <tr>
-                    <td class="align-middle">@item.Product?.Name</td>
 
-                    <td class="text-end align-middle">@item.QTY</td>
-
-                    <td class="text-end align-middle">
-                        @* @if (item.QTY > 0)
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-box-seam text-primary me-2"></i>Products in this Order</h5>
+        <button type="button" class="btn btn-primary btn-sm rounded-3 shadow-sm px-3" onclick="openAddProductModal('@Model.Id')">
+            <i class="bi bi-plus-lg me-1"></i> Add Product
+        </button>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-muted small text-uppercase">
+                    <tr>
+                        <th class="ps-4 py-3">Product Name</th>
+                        <th class="text-end py-3">Quantity</th>
+                        <th class="text-end py-3">Unit Price</th>
+                        <th class="text-end py-3">Subtotal</th>
+                        <th class="text-end py-3">Status</th>
+                        <th class="text-end pe-4 py-3" style="width: 15%;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Products != null && Model.Products.Count > 0)
+                    {
+                        @foreach (Inventra.Data.Entities.OrderDetails item in Model.Products)
                         {
-                            @((item.Subtotal / item.QTY).ToString("N2"))
+                            <tr>
+                                <td class="ps-4 fw-bold text-dark py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary bg-opacity-10 text-primary rounded d-flex justify-content-center align-items-center me-3" style="width: 35px; height: 35px;">
+                                            <i class="bi bi-box"></i>
+                                        </div>
+                                        @item.Product?.Name
+                                    </div>
+                                </td>
+                                <td class="text-end fw-bold text-dark py-3">
+                                    <span class="badge bg-light text-dark border px-2 py-1 fs-6">@item.QTY</span>
+                                </td>
+                                <td class="text-end text-muted py-3">
+                                    @item.Product.Price.ToString("N2") €
+                                </td>
+                                <td class="text-end fw-bold text-success py-3">
+                                    @item.Subtotal.ToString("N2") €
+                                </td>
+                                <td class="text-end pe-4 py-3">
+                                    <div class="btn-group btn-group-sm shadow-sm" role="group">
+                                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editModal-@item.OrderId-@item.ProductId" title="Edit Quantity">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        
+                                        <form asp-controller="OrderDetails" asp-action="DeleteOne" method="post" asp-route-orderId="@item.OrderId" asp-route-productId="@item.ProductId" class="d-inline" onsubmit="return confirm('Are you sure you want to remove 1 unit of this product?');">
+                                            <button type="submit" class="btn btn-outline-warning" style="border-radius: 0;" title="Remove 1 Unit">
+                                                <i class="bi bi-dash-circle"></i>
+                                            </button>
+                                        </form>
+
+                                        <form asp-controller="OrderDetails" asp-action="Delete" method="post" asp-route-orderId="@item.OrderId" asp-route-productId="@item.ProductId" class="d-inline" onsubmit="return confirm('Are you sure you want to completely remove this product from the order?');">
+                                            <button type="submit" class="btn btn-outline-danger" title="Remove Product">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
                         }
-                        else
-                        {
-                            @("0.00")
-                        } *@
-                        @*@item.Product.Price
-                    </td>
-
-                    <td class="text-end align-middle fw-bold">@item.Subtotal.ToString("N2") €</td>
-                    
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-2">
-                            
-                            <button type="button" class="btn btn-sm btn-outline-primary"
-                                    data-bs-toggle="modal" data-bs-target="#editModal-@item.OrderId-@item.ProductId">
-                                Edit Qty
-                            </button>
-
-                            <form asp-controller="OrderDetails" asp-action="Delete" method="post"
-                                  asp-route-orderId="@item.OrderId" asp-route-productId="@item.ProductId"
-                                  onsubmit="return confirm('Are you sure you want to remove this product?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                    Delete
-                                </button>
-                            </form>
-                            <form asp-controller="OrderDetails" asp-action="DeleteOne" method="post"
-                                  asp-route-orderId="@item.OrderId" asp-route-productId="@item.ProductId"
-                                  onsubmit="return confirm('Are you sure you want to remove this product?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                    -1
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            }
-        }
-        else
-        {
-            <tr>
-                <td colspan="5" class="text-center text-muted p-4">
-                    <em>No products have been added to this order yet.</em>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<div class="mt-4">
-    <a asp-action="Index" class="btn btn-outline-secondary">Back to Orders List</a>
-</div>
-
-@if (Model.Products != null && Model.Products.Count > 0)
-{
-    @foreach (Inventra.Data.Entities.OrderDetails item in Model.Products)
-    {
-        <div class="modal fade text-start" id="editModal-@item.OrderId-@item.ProductId" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Update Quantity for @item.Product?.Name</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    
-                    <form asp-controller="OrderDetails" asp-action="Edit" method="post">
-                        <div class="modal-body">
-                            <input type="hidden" name="OrderId" value="@item.OrderId" />
-                            <input type="hidden" name="ProductId" value="@item.ProductId" />
-                            
-                            <div class="mb-3">
-                                <label class="form-label">New Quantity</label>
-                                <input type="number" name="QTY" class="form-control" value="@item.QTY" min="1" required />
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-cart-x fs-2 d-block mb-2"></i>
+                                <em>No products have been added to this order yet.</em>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-    }
-}*@
-
-
-@model Inventra.Core.ViewModels.Orders.OrderDetailsViewModel
-
-@{
-    ViewData["Title"] = "Order Details";
-}
-
-<h1>Order Details</h1>
-
-<div>
-    <h4>Order Summary</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">Customer</dt>
-        <dd class="col-sm-10">@Model.CustomerName</dd>
-
-        <dt class="col-sm-2">Courier</dt>
-        <dd class="col-sm-10">@Model.CourierName</dd>
-
-        <dt class="col-sm-2">Tracking Number</dt>
-        <dd class="col-sm-10">@Model.TrackingNumber</dd>
-
-        <dt class="col-sm-2">Additional Information</dt>
-        <dd class="col-sm-10">@Model.AdditionalInfo</dd>
-
-        <dt class="col-sm-2">Order Total</dt>
-        <dd class="col-sm-10 fw-bold text-success">@Model.TotalPrice.ToString("N2") €</dd>
-    </dl>
+    </div>
 </div>
 
-<hr class="mt-4 mb-4" />
-
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4>Products in this Order</h4>
-
-    <button type="button" class="btn btn-success" onclick="openAddProductModal('@Model.Id')">
-        <i class="bi bi-plus-circle"></i> Add Product
-    </button>
-</div>
-
-<table class="table table-bordered table-striped mt-3">
-    <thead class="table-dark">
-        <tr>
-            <th>Product Name</th>
-            <th class="text-end">Quantity (QTY)</th>
-            <th class="text-end">Unit Price</th>
-            <th class="text-end">Subtotal</th>
-            <th class="text-end">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.Products != null && Model.Products.Count > 0)
-        {
-            @foreach (Inventra.Data.Entities.OrderDetails item in Model.Products)
-            {
-                <tr>
-                    <td class="align-middle">@item.Product?.Name</td>
-
-                    <td class="text-end align-middle">@item.QTY</td>
-
-                    <td class="text-end align-middle">
-                        @item.Product.Price
-                    </td>
-
-                    <td class="text-end align-middle fw-bold">@item.Subtotal.ToString("N2") €</td>
-                    
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-2">
-                            
-                            <button type="button" class="btn btn-sm btn-outline-primary"
-                                    data-bs-toggle="modal" data-bs-target="#editModal-@item.OrderId-@item.ProductId">
-                                Edit Qty
-                            </button>
-
-                            <form asp-controller="OrderDetails" asp-action="Delete" method="post"
-                                  asp-route-orderId="@item.OrderId" asp-route-productId="@item.ProductId"
-                                  onsubmit="return confirm('Are you sure you want to remove this product?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                    Delete
-                                </button>
-                            </form>
-                            <form asp-controller="OrderDetails" asp-action="DeleteOne" method="post"
-                                  asp-route-orderId="@item.OrderId" asp-route-productId="@item.ProductId"
-                                  onsubmit="return confirm('Are you sure you want to remove this product?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                    -1
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            }
-        }
-        else
-        {
-            <tr>
-                <td colspan="5" class="text-center text-muted p-4">
-                    <em>No products have been added to this order yet.</em>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<div class="mt-4">
-    <a asp-action="Index" class="btn btn-outline-secondary">Back to Orders List</a>
-</div>
 
 @if (Model.Products != null && Model.Products.Count > 0)
 {
     @foreach (Inventra.Data.Entities.OrderDetails item in Model.Products)
     {
-        <div class="modal fade text-start" id="editModal-@item.OrderId-@item.ProductId" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Update Quantity for @item.Product?.Name</h5>
+        <div class="modal fade" id="editModal-@item.OrderId-@item.ProductId" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow rounded-4">
+                    <div class="modal-header border-bottom-0 pb-0">
+                        <h5 class="modal-title fw-bold text-dark">Update Quantity</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     
                     <form asp-controller="OrderDetails" asp-action="Edit" method="post">
-                        <div class="modal-body">
+                        <div class="modal-body py-4">
+                            <p class="text-muted small mb-3">Updating stock allocation for <strong>@item.Product?.Name</strong></p>
+
                             <input type="hidden" name="OrderId" value="@item.OrderId" />
                             <input type="hidden" name="ProductId" value="@item.ProductId" />
                             
-                            <div class="mb-3">
-                                <label class="form-label">New Quantity</label>
-                                <input type="number" name="QTY" class="form-control" value="@item.QTY" min="1" required />
+                            <div class="mb-2">
+                                <label class="form-label fw-bold text-dark">New Quantity <span class="text-danger">*</span></label>
+                                <div class="input-group input-group-lg shadow-sm rounded-3">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-123"></i></span>
+                                    <input type="number" name="QTY" class="form-control border-start-0 ps-0" value="@item.QTY" min="1" required />
+                                </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <div class="modal-footer border-top-0 pt-0">
+                            <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary rounded-3 px-4 shadow-sm"><i class="bi bi-check-lg me-1"></i> Save Changes</button>
                         </div>
                     </form>
                 </div>
@@ -290,9 +169,10 @@
     }
 }
 
-<div class="modal fade text-start" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content" id="addProductModalContent">
+
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4" id="addProductModalContent">
         </div>
     </div>
 </div>
@@ -300,18 +180,11 @@
 @section Scripts {
     <script>
         function openAddProductModal(orderId) {
-            // Извикваме контролера, за да вземем формата за добавяне
             $.get('/OrderDetails/Create', { orderId: orderId }, function(data) {
-                
-                // Пълним празния контейнер с върнатия HTML
                 $('#addProductModalContent').html(data);
-                
-                // Показваме модала на екрана
                 var addModal = new bootstrap.Modal(document.getElementById('addProductModal'));
                 addModal.show();
-                
             }).fail(function() {
-                // В случай че сървърът върне грешка
                 alert("Възникна грешка при зареждането на формата. Моля, проверете връзката или опитайте отново.");
             });
         }

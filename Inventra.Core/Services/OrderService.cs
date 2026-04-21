@@ -28,6 +28,7 @@ namespace Inventra.Core.Services
                 CourierId = model.CourierId,
                 TrackingNumber = model.TrackingNumber,
                 AdditionalInfo = model.AdditionalInfo,
+                Status= model.Status,
                 ETA= model.ETA
             };
 
@@ -57,6 +58,7 @@ namespace Inventra.Core.Services
                     CourierName = o.Courier.Name,
                     TrackingNumber = o.TrackingNumber,
                     TotalPrice = o.TotalPrice,
+                    Status= o.Status,
                     ETA= o.ETA
                 }).ToListAsync();
         }
@@ -118,6 +120,7 @@ namespace Inventra.Core.Services
             order.TrackingNumber = model.TrackingNumber;
             order.AdditionalInfo = model.AdditionalInfo;
             order.ETA=model.ETA;
+            order.Status = model.Status;
             //order.TotalPrice = model.TotalPrice;
 
             try

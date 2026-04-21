@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Inventra.Data.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Inventra.Core.ViewModels.Orders
 {
@@ -23,6 +24,9 @@ namespace Inventra.Core.ViewModels.Orders
 
         [Required]
         public decimal TotalPrice { get; set; }
+
+        [Required]
+        public Statuses Status { get; set; }
 
         [Required]
         public string AdditionalInfo { get; set; } = null!;
