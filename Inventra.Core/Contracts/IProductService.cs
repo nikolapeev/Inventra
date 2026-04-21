@@ -11,7 +11,7 @@ namespace Inventra.Core.Contracts
 {
     public interface IProductService
     {
-        Task<List<ProductIndexViewModel>> GetAllAsync();
+        Task<List<ProductIndexViewModel>> GetAllAsync(string? searchTerm = null);
 
         Task<ProductDetailsViewModel?> GetDetailsByIdAsync(Guid id);
 

@@ -32,8 +32,17 @@
             <div class="card-body p-4">
                 <dl class="row mb-0 g-3">
                     <dt class="col-sm-4 text-muted fw-normal"><i class="bi bi-person me-2 text-primary"></i>Customer</dt>
-                    <dd class="col-sm-8 fw-bold text-dark">@Model.CustomerName</dd>
+                    <dd class="col-sm-8 fw-bold text-dark">
+                        @Model.CustomerName |
+                        <a href="mailto:@Model.Email" class="text-decoration-none">@Model.Email</a> |
+                        @Model.Phone
+                    </dd>
                     
+                    <div class="col-12"><hr class="my-1 border-light"></div>
+
+                    <dt class="col-sm-4 text-muted fw-normal"><i class="bi bi-building me-2 text-primary"></i>Company</dt>
+                    <dd class="col-sm-8 fw-bold text-dark">@Model.CompanyName</dd>
+
                     <div class="col-12"><hr class="my-1 border-light"></div>
 
                     <dt class="col-sm-4 text-muted fw-normal"><i class="bi bi-bicycle me-2 text-primary"></i>Courier</dt>
@@ -66,7 +75,7 @@
                         <th class="text-end py-3">Quantity</th>
                         <th class="text-end py-3">Unit Price</th>
                         <th class="text-end py-3">Subtotal</th>
-                        <th class="text-end py-3">Status</th>
+                        <th class="text-end py-3">Subtotal + VAT</th>
                         <th class="text-end pe-4 py-3" style="width: 15%;">Actions</th>
                     </tr>
                 </thead>
@@ -93,18 +102,15 @@
                                 <td class="text-end fw-bold text-success py-3">
                                     @item.Subtotal.ToString("N2") €
                                 </td>
+                                <td class="text-end text-muted py-3">
+                                    @Decimal.Multiply(item.Subtotal,(decimal)1.2).ToString("N2") €
+                                </td>
                                 <td class="text-end pe-4 py-3">
                                     <div class="btn-group btn-group-sm shadow-sm" role="group">
                                         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editModal-@item.OrderId-@item.ProductId" title="Edit Quantity">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
-                                        
-                                        <form asp-controller="OrderDetails" asp-action="DeleteOne" method="post" asp-route-orderId="@item.OrderId" asp-route-productId="@item.ProductId" class="d-inline" onsubmit="return confirm('Are you sure you want to remove 1 unit of this product?');">
-                                            <button type="submit" class="btn btn-outline-warning" style="border-radius: 0;" title="Remove 1 Unit">
-                                                <i class="bi bi-dash-circle"></i>
-                                            </button>
-                                        </form>
-
+                                       
                                         <form asp-controller="OrderDetails" asp-action="Delete" method="post" asp-route-orderId="@item.OrderId" asp-route-productId="@item.ProductId" class="d-inline" onsubmit="return confirm('Are you sure you want to completely remove this product from the order?');">
                                             <button type="submit" class="btn btn-outline-danger" title="Remove Product">
                                                 <i class="bi bi-trash"></i>

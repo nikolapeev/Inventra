@@ -33,12 +33,10 @@
                         Dashboard
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Messages" asp-action="Index">
-                        <i class="bi bi-chat-left-text"></i>
-                        Message Board
-                    </a>
-                </li>
+                <a asp-controller="Messages" asp-action="Index" class="nav-link @(currentController == "Messages" ? "active" : "link-dark")">
+                    <i class="bi bi-chat-left-text"></i>
+                    Message Board
+                </a>
             }
 
             @if (User.IsInRole("Administrator") || User.IsInRole("OrderManager"))

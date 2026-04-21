@@ -1,4 +1,5 @@
 ﻿using Inventra.Core.Contracts;
+using Inventra.Core.Services;
 using Inventra.Core.ViewModels.Customers;
 using Inventra.Data;
 using Inventra.Data.Entities;
@@ -19,11 +20,11 @@ namespace Inventra.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchTerm)
         {
-            var customers = await _customerService.GetAllAsync();
-
-            return View(customers);
+            var products = await _customerService.GetAllAsync(searchTerm);
+            ViewBag.CurrentSearch = searchTerm;
+            return View(products);
         }
 
         [HttpGet]

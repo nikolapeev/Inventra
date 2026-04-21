@@ -49,6 +49,7 @@ namespace Inventra.Core.Services
         public async Task<List<SupplierIndexViewModel>> GetAllSuppliers()
         {
             return await context.Suppliers
+                .OrderBy(s=>s.Name)
                 .Select(s => new SupplierIndexViewModel
                 {
                     SupplierId = s.SupplierId,

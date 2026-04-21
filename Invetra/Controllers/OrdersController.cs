@@ -24,10 +24,10 @@ namespace Inventra.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchTerm)
         {
-            var orders = await _orderService.GetAllOrders();
-
+            var orders = await _orderService.GetAllOrders(searchTerm);
+            ViewBag.CurrentSearch = searchTerm;
             return View(orders);
         }
 

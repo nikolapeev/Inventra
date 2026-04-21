@@ -28,8 +28,8 @@ namespace Inventra.Core.Services
                 CourierId = model.CourierId,
                 TrackingNumber = model.TrackingNumber,
                 AdditionalInfo = model.AdditionalInfo,
-                Status= model.Status,
-                ETA= model.ETA
+                Status = model.Status,
+                ETA = model.ETA
             };
 
             await _context.AddAsync(order);
@@ -48,24 +48,31 @@ namespace Inventra.Core.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<OrderIndexViewModel>> GetAllOrders()
+        public async Task<List<OrderIndexViewModel>> GetAllOrders(string? searchTerm = null)
         {
-            return await _context.Orders
-                .Select(o => new OrderIndexViewModel
-                {
-                    Id = o.Id,
-                    CustomerName = o.Customer.FullName,
-                    CourierName = o.Courier.Name,
-                    TrackingNumber = o.TrackingNumber,
-                    TotalPrice = o.TotalPrice,
-                    Status= o.Status,
-                    ETA= o.ETA
-                }).ToListAsync();
+            var query = _context.Orders.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(o => o.Customer.CompanyName.Contains(searchTerm) || o.TrackingNumber.Contains(searchTerm));
+            }
+
+            return await query
+            .Select(o => new OrderIndexViewModel
+            {
+             Id = o.Id,
+             CustomerName = o.Customer.FullName,
+             CourierName = o.Courier.Name,
+             TrackingNumber = o.TrackingNumber,
+             TotalPrice = o.TotalPrice,
+             Status = o.Status,
+             ETA = o.ETA
+            }).ToListAsync();
         }
 
         public Task<List<Courier>> GetCourierList()
         {
-            return _context.Couriers.OrderBy(x=>x.Name).ToListAsync();
+            return _context.Couriers.OrderBy(x => x.Name).ToListAsync();
         }
 
         public Task<List<Customer>> GetCustomerList()
@@ -76,11 +83,11 @@ namespace Inventra.Core.Services
         public async Task<OrderDetailsViewModel?> GetDetailsById(Guid id)
         {
             var order = await _context.Orders
-                 .Include(o => o.Customer) 
-                 .Include(o=> o.Courier)
+                 .Include(o => o.Customer)
+                 .Include(o => o.Courier)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (order == null) 
+            if (order == null)
             {
                 return null;
             }
@@ -92,15 +99,18 @@ namespace Inventra.Core.Services
                 .ToListAsync();
 
 
-            /*var viewModel =*/ 
+            /*var viewModel =*/
             return new Inventra.Core.ViewModels.Orders.OrderDetailsViewModel
             {
                 Id = order.Id,
                 CustomerName = order.Customer?.FullName ?? "NO customer found",
+                CompanyName = order.Customer?.CompanyName,
+                Phone = order.Customer.PhoneNumber,
+                Email = order.Customer.Email,
                 CourierName = order.Courier.Name,
                 TrackingNumber = order.TrackingNumber,
                 AdditionalInfo = order.AdditionalInfo,
-                TotalPrice =  order.TotalPrice, // await SumOrderTotal(id),
+                TotalPrice = order.TotalPrice,
                 Products = orderItems,
                 ETA = order.ETA,
             };
@@ -112,14 +122,14 @@ namespace Inventra.Core.Services
             var order = await _context.Orders.FindAsync(model.Id);
             if (order == null)
             {
-                return ;
+                return;
             }
 
             order.CustomerId = model.CustomerId;
             order.CourierId = model.CourierId;
             order.TrackingNumber = model.TrackingNumber;
             order.AdditionalInfo = model.AdditionalInfo;
-            order.ETA=model.ETA;
+            order.ETA = model.ETA;
             order.Status = model.Status;
             //order.TotalPrice = model.TotalPrice;
 
@@ -137,15 +147,15 @@ namespace Inventra.Core.Services
 
         public async Task<Order?> GetOrderById(Guid id)
         {
-           return await _context.Orders.FindAsync(id);
+            return await _context.Orders.FindAsync(id);
         }
 
         public bool OrderExists(Guid id)
         {
-            var order=  _context.Orders.FindAsync(id); 
-            if(order == null)
+            var order = _context.Orders.FindAsync(id);
+            if (order == null)
             {
-                return false; 
+                return false;
             }
             else return true;
         }
@@ -153,7 +163,7 @@ namespace Inventra.Core.Services
         public async Task<decimal> SumOrderTotal(Guid id)
         {
             decimal total = 0;
-            var details= await _context.OrderDetails.Where(od=>od.OrderId == id).ToListAsync();
+            var details = await _context.OrderDetails.Where(od => od.OrderId == id).ToListAsync();
             foreach (var detail in details)
             {
                 total += detail.Subtotal;

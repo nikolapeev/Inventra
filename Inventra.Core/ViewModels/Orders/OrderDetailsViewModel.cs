@@ -13,6 +13,9 @@ namespace Inventra.Core.ViewModels.Orders
         public string TrackingNumber { get; set; } = null!;
         public decimal TotalPrice { get; set; }
         public string AdditionalInfo { get; set; } = null!;
+        public string Phone { get; set; } = null!;
+        public string CompanyName { get; set; } = null!;
+        public string Email {  get; set; } = null!;
         public List<Data.Entities.OrderDetails> Products { get; set; } = new List<Data.Entities.OrderDetails>();
     }
 }

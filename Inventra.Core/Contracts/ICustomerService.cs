@@ -10,7 +10,7 @@ namespace Inventra.Core.Contracts
 {
     public interface ICustomerService
     {
-        Task<List<CustomerIndexViewModel>> GetAllAsync();
+        Task<List<CustomerIndexViewModel>> GetAllAsync(string? searchTerm = null);
 
         Task<CustomerDetailsViewModel?> GetByIdAsync(Guid id);
 

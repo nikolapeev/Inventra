@@ -45,6 +45,7 @@ namespace Inventra.Core.Services
         public async Task<List<CategoryIndexViewModel>> GetAllAsync()
         {
             return await context.Categories
+                .OrderBy(x=>x.Name)
                 .Select(x => new CategoryIndexViewModel
                 {
                     CategoryId = x.CategoryId,

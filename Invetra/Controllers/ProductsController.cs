@@ -17,11 +17,10 @@ namespace Inventra.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchTerm)
         {
-            
-            var products =await _productService.GetAllAsync();
-
+            var products = await _productService.GetAllAsync(searchTerm);
+            ViewBag.CurrentSearch = searchTerm;
             return View(products);
         }
 

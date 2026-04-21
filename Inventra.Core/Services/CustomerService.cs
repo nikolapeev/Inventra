@@ -55,9 +55,16 @@ namespace Inventra.Core.Services
             await context.SaveChangesAsync();
         }
 
-        public async Task<List<CustomerIndexViewModel>> GetAllAsync()
+        public async Task<List<CustomerIndexViewModel>> GetAllAsync(string? searchTerm = null)
         {
-            return await context.Customers
+            var query = context.Customers.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(p => p.FullName.Contains(searchTerm)||p.CompanyName.Contains(searchTerm));
+            }
+
+            return await query
                 .Select(c => new CustomerIndexViewModel
                 {
                     CustomerId = c.CustomerId,

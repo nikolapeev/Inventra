@@ -10,7 +10,7 @@ namespace Inventra.Core.Contracts
 {
     public interface IOrderService
     {
-        public Task<List<OrderIndexViewModel>> GetAllOrders();
+        public Task<List<OrderIndexViewModel>> GetAllOrders(string? searchTerm = null);
 
         public Task<OrderDetailsViewModel> GetDetailsById(Guid id);
 

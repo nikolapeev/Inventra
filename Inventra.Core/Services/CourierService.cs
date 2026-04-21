@@ -22,6 +22,7 @@ namespace Inventra.Core.Services
         public async Task<IEnumerable<CourierIndexViewModel>> GetAllAsync()
         {
             return await context.Couriers
+                .OrderBy(x => x.Name)
                 .Select(c => new CourierIndexViewModel
                 {
                     CourierId = c.CourierId,

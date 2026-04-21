@@ -62,9 +62,16 @@ namespace Inventra.Core.Services
             return await context.Categories.OrderBy(s => s.Name).ToListAsync();
         }
 
-        public async Task<List<ProductIndexViewModel>> GetAllAsync()
+        public async Task<List<ProductIndexViewModel>> GetAllAsync(string? searchTerm = null)
         {
-            return await context.Products
+            var query = context.Products.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(p => p.Name.Contains(searchTerm));
+            }
+
+            return await query
                 .Select(p => new ProductIndexViewModel
                 {
                     Id = p.Id,

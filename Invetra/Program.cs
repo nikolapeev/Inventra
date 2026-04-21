@@ -23,8 +23,8 @@ public class Program
             options.UseSqlServer(builder.Configuration.GetConnectionString("GigaByte")));
 
         builder.Services.AddDefaultIdentity<InventraUser>(options => {
-            options.SignIn.RequireConfirmedAccount = false; // Set to true if you want email confirmation later
-            options.Password.RequireDigit = false;          // Making it easier for you to test
+            options.SignIn.RequireConfirmedAccount = false; 
+            options.Password.RequireDigit = false;          
             options.Password.RequiredLength = 6;
             options.Password.RequireNonAlphanumeric = false;
             options.Password.RequireUppercase = false;
@@ -40,6 +40,7 @@ public class Program
         builder.Services.AddScoped<IOrderService, OrderService>();
         builder.Services.AddScoped<IOrderDetailsService, OrderDetailsService>();
         builder.Services.AddScoped<IMessageService, MessageService>();
+        builder.Services.AddScoped<IDashboardService, DashboardService>();
 
         var app = builder.Build();
 
