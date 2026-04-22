@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Inventra.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = "Administrator,InventoryManager")]
     public class SuppliersController : Controller
     {
         private readonly ISupplierService _supplierService;

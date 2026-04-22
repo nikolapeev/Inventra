@@ -60,7 +60,8 @@ namespace Inventra.Controllers
             var model = new CourierIndexViewModel
             {
                 CourierId = courier.CourierId,
-                Name = courier.Name
+                Name = courier.Name,
+                Phone=courier.Phone
             };
 
             return View(model);

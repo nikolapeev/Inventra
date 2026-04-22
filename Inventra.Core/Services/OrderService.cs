@@ -152,12 +152,7 @@ namespace Inventra.Core.Services
 
         public bool OrderExists(Guid id)
         {
-            var order = _context.Orders.FindAsync(id);
-            if (order == null)
-            {
-                return false;
-            }
-            else return true;
+            return _context.Orders.Any(o => o.Id == id);
         }
 
         public async Task<decimal> SumOrderTotal(Guid id)

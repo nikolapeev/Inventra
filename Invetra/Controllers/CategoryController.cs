@@ -81,17 +81,6 @@ namespace Inventra.Controllers
                 return View(model);
             }
 
-            //var category = await _categoryService.GetByIdAsync(model.CategoryId);
-
-            //if (category == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //category.Name = model.Name;
-
-
-            //await _context.SaveChangesAsync();
             await _categoryService.UpdateAsync(model);
 
             return RedirectToAction(nameof(Index));
@@ -100,15 +89,6 @@ namespace Inventra.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
-            //var cat= await _context.Categories.FindAsync(id);
-
-            //if (cat == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //_context.Categories.Remove(cat);
-            //await _context.SaveChangesAsync();
             await _categoryService.DeleteAsync(id);
             return RedirectToAction("Index");
         }

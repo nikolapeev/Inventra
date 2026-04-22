@@ -107,6 +107,7 @@
                 </div>
             </div>
         }
+
         <div class="row g-4">
 
             @if (User.IsInRole("Administrator") || User.IsInRole("OrderManager"))
@@ -160,14 +161,14 @@
                     
                                 <div class="col-4">
                                     <div class="p-3 border-start border-info border-4 bg-light rounded">
-                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1" style="font-size: 0.75rem;">Processed</div>
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1" style="font-size: 0.75rem;">In Progress</div>
                                         <div class="h4 mb-0 font-weight-bold text-dark">@Model.InProgressOrdersCount</div>
                                     </div>
                                 </div>
                     
                                 <div class="col-4">
                                     <div class="p-3 border-start border-warning border-4 bg-light rounded">
-                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1" style="font-size: 0.75rem;">Pending</div>
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1" style="font-size: 0.75rem;">Processed</div>
                                         <div class="h4 mb-0 font-weight-bold text-dark">@Model.ProcessedOrdersCount</div>
                                     </div>
                                 </div>
@@ -200,26 +201,9 @@
             @if (User.IsInRole("InventoryManager") || User.IsInRole("Administrator"))
             {
                 //low Stock
-                <div class="col-md-3 mb-4">
-                    @if (Model.LowStockProductsCount == 0)
-                    {
-                        <div class="card text-white bg-info shadow h-100">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <span><i class="bi bi-exclamation-triangle-fill"></i> Ниска наличност</span>
-                            </div>
-                            <div class="card-body">
-                                <h3 class="card-title">@Model.LowStockProductsCount</h3>
-                                <p class="card-text">Продукти с под 5 бройки в склада.</p>
-                            </div>
-                            <div class="card-footer bg-transparent border-0">
-                                <a asp-controller="Products" asp-action="Index" class="text-white text-decoration-none fw-bold">
-                                    Виж продуктите <i class="bi bi-arrow-right-circle"></i>
-                                </a>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
+                @if(@Model.LowStockProductsCount!=0)
+                {<div class="col-md-3 mb-4">
+                   
                         <div class="card text-white bg-warning shadow h-100">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <span><i class="bi bi-exclamation-triangle-fill"></i> Ниска наличност</span>
@@ -234,8 +218,7 @@
                                 </a>
                             </div>
                         </div>
-                    }
-                </div>
+                </div>}
 
                 //most purchased
                 <div class="col-lg-6">

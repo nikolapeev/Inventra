@@ -12,7 +12,7 @@ namespace Inventra.Data
 {
     public class InventraDbContext : IdentityDbContext<InventraUser>
     {
-        public InventraDbContext(DbContextOptions options) : base(options)
+        public InventraDbContext(DbContextOptions<InventraDbContext> options) : base(options)
         {
         }
 

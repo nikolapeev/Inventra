@@ -17,7 +17,7 @@
         <form asp-action="Index" method="get" class="mb-3">
             <div class="input-group">
                 <input type="text" name="searchTerm" value="@ViewBag.CurrentSearch"
-                       class="form-control"  />
+                       class="form-control" />
                 <button type="submit" class="btn btn-outline-secondary">
                     <i class="bi bi-search"></i> Search
                 </button>
@@ -83,9 +83,24 @@
                                     @item.TotalPrice.ToString("N2") €
                                 </td>
                                 <td class="py-3">
-                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 rounded-pill px-3 py-1">
-                                        @Html.DisplayFor(modelItem => item.Status)
-                                    </span>
+                                    @if (item.Status == Inventra.Data.Enums.Statuses.InProgress)
+                                    {
+                                        <span class="badge bg-primary bg-opacity-50 text-white border border-secondary border-opacity-25 rounded-pill px-3 py-1">
+                                            @Html.DisplayFor(modelItem => item.Status)
+                                        </span>
+                                    }
+                                    else if (item.Status == Inventra.Data.Enums.Statuses.Shipped)
+                                    {
+                                        <span class="badge bg-success bg-opacity-50 text-white border border-secondary border-opacity-25 rounded-pill px-3 py-1">
+                                            @Html.DisplayFor(modelItem => item.Status)
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning bg-opacity-50 text-white border border-secondary border-opacity-25 rounded-pill px-3 py-1">
+                                            @Html.DisplayFor(modelItem => item.Status)
+                                        </span>
+                                    }
                                 </td>
                                 <td class="text-end pe-4 py-3">
                                     <div class="btn-group btn-group-sm shadow-sm" role="group">

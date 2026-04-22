@@ -53,6 +53,12 @@
                         Customers
                     </a>
                 </li>
+                <li>
+                <a asp-controller="Couriers" asp-action="Index" class="nav-link @(currentController == "Couriers" ? "active" : "link-dark")">
+                        <i class="bi bi-bicycle me-2"></i>
+                        Couriers
+                    </a>
+                </li>
             }
 
             @if (User.IsInRole("Administrator") || User.IsInRole("InventoryManager"))
@@ -69,28 +75,25 @@
                         Categories
                     </a>
                 </li>
-            }
-
-            @if (User.IsInRole("Administrator"))
-            {
                 <li>
                     <a asp-controller="Suppliers" asp-action="Index" class="nav-link @(currentController == "Suppliers" ? "active" : "link-dark")">
                         <i class="bi bi-truck me-2"></i>
                         Suppliers
                     </a>
                 </li>
+            }
+
+            @if (User.IsInRole("Administrator"))
+            {
+                
                 <li>
                     <a asp-controller="Admin" asp-action="Index" class="nav-link @(currentController == "Admin" ? "active" : "link-dark")">
                         <i class="bi bi-person-badge me-2"></i>
                         Users
                     </a>
                 </li>
-                <li>
-                    <a asp-controller="Couriers" asp-action="Index" class="nav-link @(currentController == "Couriers" ? "active" : "link-dark")">
-                        <i class="bi bi-bicycle me-2"></i>
-                        Couriers
-                    </a>
-                </li>
+                
+                    
             }
         </ul>
         <hr>
